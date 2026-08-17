@@ -1,0 +1,55 @@
+import { X } from 'lucide-react'
+import { hu } from '@/i18n/hu'
+
+type Props = {
+  label: string
+  value: number | undefined
+  min: number
+  max: number
+  step: number
+  onChange: (value: number | undefined) => void
+}
+
+const round = (value: number) => Math.round(value * 10) / 10
+
+export default function Stepper({ label, value, min, max, step, onChange }: Props) {
+  const decrease = () => {
+    if (value !== undefined && value > min) onChange(round(Math.max(min, value - step)))
+  }
+  const increase = () => {
+    onChange(value === undefined ? min : round(Math.min(max, value + step)))
+  }
+
+  return (
+    <div className="flex items-center gap-2 border-b border-line py-2 last:border-b-0">
+      <div className="flex-1 text-[15px]">{label}</div>
+      {value !== undefined && (
+        <button
+          type="button"
+          aria-label={hu.entry.clear}
+          onClick={() => onChange(undefined)}
+          className="p-2 text-muted"
+        >
+          <X size={16} />
+        </button>
+      )}
+      <button
+        type="button"
+        onClick={decrease}
+        disabled={value === undefined || value <= min}
+        className="h-12 w-12 rounded-full bg-sage-soft text-xl font-medium text-sage disabled:opacity-30"
+      >
+        −
+      </button>
+      <div className="w-12 text-center text-lg font-semibold tabular-nums">{value ?? '–'}</div>
+      <button
+        type="button"
+        onClick={increase}
+        disabled={value !== undefined && value >= max}
+        className="h-12 w-12 rounded-full bg-sage-soft text-xl font-medium text-sage disabled:opacity-30"
+      >
+        +
+      </button>
+    </div>
+  )
+}

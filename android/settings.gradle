@@ -1,0 +1,11 @@
+// Toolchain auto-letöltés: a Capacitor-pluginek Java 21-et kérnek; ha a gépen
+// nincs, a Gradle a foojay resolverrel húzza le (CI-ben a temurin 21 már ott van).
+plugins {
+    id 'org.gradle.toolchains.foojay-resolver-convention' version '0.10.0'
+}
+
+include ':app'
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins/')
+
+apply from: 'capacitor.settings.gradle'

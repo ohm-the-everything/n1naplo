@@ -1,0 +1,40 @@
+@import 'tailwindcss';
+
+@theme {
+  --color-paper: #faf6ef;
+  --color-card: #fffdf8;
+  --color-ink: #2b2723;
+  --color-muted: #7a7266;
+  --color-line: #e7dfd2;
+  --color-sage: #3d6b5e;
+  --color-sage-soft: #e3ede9;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-sans);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Safe area: env() csak itt, máshol a változót használd (calc()-ban az env()
+   megbízhatatlan a WebView-ban — forni-konvenció). */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --nav-height: 4.5rem;
+}

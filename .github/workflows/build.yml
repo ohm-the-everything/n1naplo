@@ -1,0 +1,60 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Kapu: typecheck + lint + tesztek (forni-minta).
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Typecheck
+        run: npx tsc -b --noEmit
+      - name: Lint & format
+        run: npx biome check src/
+      - name: Tests
+        run: npx vitest run
+
+  # Debug APK artifactként — János letölti, telepíti. Release-út később (F-Droid / GitHub Releases).
+  android:
+    needs: check
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - name: Build web bundle
+        run: npm run build
+      - name: Sync Capacitor (Android)
+        run: npx cap sync android
+      - name: Build debug APK
+        working-directory: android
+        run: ./gradlew assembleDebug
+      - name: No-INTERNET guard
+        # A termékígéret: az app soha nem kér INTERNET permissiont. Ha bármi
+        # (plugin, dependency) visszahozná a merge-elt manifestbe, a build bukik.
+        run: '! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/'
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: n1naplo-debug-apk
+          path: android/app/build/outputs/apk/debug/app-debug.apk
