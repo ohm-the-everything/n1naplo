@@ -12,7 +12,7 @@ type Props = {
 }
 
 type Card = {
-  key: NumericField
+  key: string
   label: string
   values: (number | undefined)[]
   min: number
@@ -72,17 +72,33 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   const series = (field: NumericField) => dates.map((date) => entries[date]?.[field])
 
   const cards: Card[] = []
-  const addCard = (key: NumericField, label: string, min: number, fallbackMax: number) => {
-    if (!settings.enabledFields[key]) return
-    const values = series(key)
+  const pushCard = (
+    key: string,
+    label: string,
+    values: (number | undefined)[],
+    min: number,
+    fallbackMax: number,
+  ) => {
     const filled = values.filter((v): v is number => v !== undefined)
     const max = filled.length > 0 ? Math.max(fallbackMax, ...filled) : fallbackMax
     cards.push({ key, label, values, min, max })
   }
-  addCard('med1', settings.med1Label, 0, 1)
-  addCard('med2', settings.med2Label, 0, 1)
+  const addCard = (key: NumericField, label: string, min: number, fallbackMax: number) => {
+    if (!settings.enabledFields[key]) return
+    pushCard(key, label, series(key), min, fallbackMax)
+  }
+  for (const med of settings.meds.filter((m) => m.enabled)) {
+    pushCard(
+      `med-${med.id}`,
+      med.label || hu.settings.medLabelPlaceholder,
+      dates.map((date) => entries[date]?.meds?.[med.id]),
+      0,
+      1,
+    )
+  }
   addCard('alvas', hu.fields.alvas, 0, 8)
   addCard('izgalom', hu.fields.izgalom, 1, 5)
+  addCard('szorongas', hu.fields.szorongas, 1, 5)
   addCard('unalom', hu.fields.unalom, 1, 5)
   addCard('hangulat', hu.fields.hangulat, 1, 5)
   addCard('sovargas', hu.fields.sovargas, 0, 5)
@@ -90,8 +106,9 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   const dosePoints = dates.flatMap((date) => {
     const entry = entries[date]
     if (!entry || entry.izgalom === undefined) return []
-    if (entry.med1 === undefined && entry.med2 === undefined) return []
-    return [{ x: (entry.med1 ?? 0) + (entry.med2 ?? 0), y: entry.izgalom }]
+    const doses = Object.values(entry.meds ?? {})
+    if (doses.length === 0) return []
+    return [{ x: doses.reduce((sum, dose) => sum + dose, 0), y: entry.izgalom }]
   })
   const boredomPoints = dates.flatMap((date) => {
     const entry = entries[date]

@@ -1,8 +1,8 @@
-import { Share2 } from 'lucide-react'
+import { Plus, Share2 } from 'lucide-react'
 import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
 import { exportCsv } from '@/lib/export'
-import { ALL_FIELDS, type DayEntry, type FieldKey, type Settings } from '@/types'
+import { ALL_FIELDS, type DayEntry, type Med, type Settings } from '@/types'
 
 type Props = {
   entries: Record<string, DayEntry>
@@ -13,10 +13,14 @@ type Props = {
 const pad = (n: number) => String(n).padStart(2, '0')
 
 export default function SettingsPage({ entries, settings, onSettings }: Props) {
-  const fieldLabel = (key: FieldKey): string => {
-    if (key === 'med1') return settings.med1Label
-    if (key === 'med2') return settings.med2Label
-    return hu.fields[key]
+  const changeMed = (index: number, changes: Partial<Med>) => {
+    const meds = settings.meds.map((med, i) => (i === index ? { ...med, ...changes } : med))
+    onSettings({ ...settings, meds })
+  }
+
+  const addMed = () => {
+    const med: Med = { id: `med-${crypto.randomUUID().slice(0, 8)}`, label: '', enabled: true }
+    onSettings({ ...settings, meds: [...settings.meds, med] })
   }
 
   return (
@@ -71,18 +75,29 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
 
       <section className="rounded-xl border border-line bg-card p-4">
         <h2 className="text-sm font-semibold">{hu.settings.medsSection}</h2>
-        <input
-          value={settings.med1Label}
-          onChange={(event) => onSettings({ ...settings, med1Label: event.target.value })}
-          placeholder={hu.settings.medLabelPlaceholder}
-          className="mt-3 w-full rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
-        />
-        <input
-          value={settings.med2Label}
-          onChange={(event) => onSettings({ ...settings, med2Label: event.target.value })}
-          placeholder={hu.settings.medLabelPlaceholder}
-          className="mt-2 w-full rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
-        />
+        {settings.meds.map((med, index) => (
+          <div key={med.id} className="mt-2 flex items-center gap-3">
+            <input
+              value={med.label}
+              onChange={(event) => changeMed(index, { label: event.target.value })}
+              placeholder={hu.settings.medLabelPlaceholder}
+              className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
+            />
+            <Toggle
+              checked={med.enabled}
+              onChange={(on) => changeMed(index, { enabled: on })}
+              label={med.label || hu.settings.medLabelPlaceholder}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={addMed}
+          className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sage"
+        >
+          <Plus size={16} />
+          {hu.settings.addMed}
+        </button>
         <p className="mt-2 text-xs text-muted">{hu.settings.medsHint}</p>
       </section>
 
@@ -94,7 +109,7 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
               key={key}
               className="flex items-center justify-between border-b border-line py-2.5 last:border-b-0"
             >
-              <span className="text-sm">{fieldLabel(key)}</span>
+              <span className="text-sm">{hu.fields[key]}</span>
               <Toggle
                 checked={settings.enabledFields[key]}
                 onChange={(on) =>
@@ -103,7 +118,7 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
                     enabledFields: { ...settings.enabledFields, [key]: on },
                   })
                 }
-                label={fieldLabel(key)}
+                label={hu.fields[key]}
               />
             </div>
           ))}

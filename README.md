@@ -5,8 +5,8 @@ internet-hozzáférést.** Nincs analitika, nincs fiók, nincs felhő. A CI kül
 hogy az APK-ba ne kerülhessen INTERNET permission.
 
 Nyílt forráskódú Android-napló n-of-1 öntesztelőknek — AuDHD-s és neurodivergens
-sorstársaknak. Napi egy sor, húsz másodperc: gyógyszer, alvás, izgalom, unalom, hangulat,
-sóvárgás, jegyzet. Hetek alatt személyes dózis–állapot idősor rajzolódik ki, amit
+sorstársaknak. Napi egy sor, húsz másodperc: gyógyszerek, alvás, izgalom, szorongás,
+unalom, hangulat, sóvárgás, jegyzet. Hetek alatt személyes dózis–állapot idősor rajzolódik ki, amit
 „leletbemutatásként" vihetsz az orvosodhoz.
 
 ## Mit tud (v1)

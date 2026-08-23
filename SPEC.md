@@ -11,17 +11,19 @@ János CC0-t is szeret, döntés release előtt).
 | mező | típus | skála |
 |---|---|---|
 | dátum | auto | — |
-| gyógyszer 1 (pl. XR) | szám | darab |
-| gyógyszer 2 (pl. IR) | szám | darab |
+| gyógyszerek (pl. XR, IR — alapból 2 mező, bővíthető) | szám | darab |
 | alvás | szám | óra, 0,5 lépés |
 | izgalom | szám | 1–5 |
+| szorongás | szám | 1–5 — nem ugyanaz, mint az izgalom (János, 2026-08-23) |
 | **unalom** | szám | 1–5 — kulcsmező: a sóvárgás fő prediktora a hipotézis szerint |
 | hangulat | szám | 1–5 |
 | sóvárgás | szám | 0–5 |
 | jegyzet | szöveg | opcionális, rövid |
 
 A gyógyszermezők címkéi szerkeszthetők (ne legyen hardcode „Ritalin" — más sorstársnak
-más a lelete). Mezők be/ki kapcsolhatók a beállításokban.
+más a lelete), és a beállításokban további gyógyszermezők adhatók hozzá; a kikapcsolt
+gyógyszermező adata megmarad, és az exportban is szerepel. Mezők be/ki kapcsolhatók a
+beállításokban.
 
 ## Funkciók (v1 — szándékosan minimális)
 

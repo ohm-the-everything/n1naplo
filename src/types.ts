@@ -1,9 +1,11 @@
+export type Med = { id: string; label: string; enabled: boolean }
+
 export type DayEntry = {
   date: string // ISO yyyy-MM-dd
-  med1?: number
-  med2?: number
+  meds?: Record<string, number> // med id → darab
   alvas?: number
   izgalom?: number
+  szorongas?: number
   unalom?: number
   hangulat?: number
   sovargas?: number
@@ -11,10 +13,9 @@ export type DayEntry = {
 }
 
 export const NUMERIC_FIELDS = [
-  'med1',
-  'med2',
   'alvas',
   'izgalom',
+  'szorongas',
   'unalom',
   'hangulat',
   'sovargas',
@@ -26,8 +27,7 @@ export type FieldKey = NumericField | 'jegyzet'
 export const ALL_FIELDS: FieldKey[] = [...NUMERIC_FIELDS, 'jegyzet']
 
 export type Settings = {
-  med1Label: string
-  med2Label: string
+  meds: Med[]
   reminderEnabled: boolean
   reminderHour: number
   reminderMinute: number
@@ -37,5 +37,8 @@ export type Settings = {
 
 // A teljesen üres sor adatlyuk, nem tárolt nulla.
 export function isEmptyEntry(entry: DayEntry): boolean {
-  return NUMERIC_FIELDS.every((field) => entry[field] === undefined) && !entry.jegyzet?.trim()
+  const hasMed = Object.values(entry.meds ?? {}).some((value) => value !== undefined)
+  return (
+    !hasMed && NUMERIC_FIELDS.every((field) => entry[field] === undefined) && !entry.jegyzet?.trim()
+  )
 }

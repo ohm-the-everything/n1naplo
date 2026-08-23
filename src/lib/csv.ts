@@ -1,12 +1,14 @@
-import type { DayEntry } from '@/types'
+import type { DayEntry, Med } from '@/types'
 
-export function buildCsv(entries: DayEntry[], med1Label: string, med2Label: string): string {
+// Minden gyógyszermező külön oszlop — a kikapcsoltak is, hogy a történeti
+// adat sose maradjon ki a leletbemutatásból.
+export function buildCsv(entries: DayEntry[], meds: Med[]): string {
   const header = [
     'datum',
-    med1Label,
-    med2Label,
+    ...meds.map((med) => med.label),
     'alvas_ora',
     'izgalom',
+    'szorongas',
     'unalom',
     'hangulat',
     'sovargas',
@@ -15,10 +17,10 @@ export function buildCsv(entries: DayEntry[], med1Label: string, med2Label: stri
   const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
   const rows = sorted.map((entry) => [
     entry.date,
-    num(entry.med1),
-    num(entry.med2),
+    ...meds.map((med) => num(entry.meds?.[med.id])),
     num(entry.alvas),
     num(entry.izgalom),
+    num(entry.szorongas),
     num(entry.unalom),
     num(entry.hangulat),
     num(entry.sovargas),

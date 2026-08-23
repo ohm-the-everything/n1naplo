@@ -20,6 +20,16 @@ export default function EntryPage({ entries, settings, onChange }: Props) {
 
   const patch = (changes: Partial<DayEntry>) => onChange({ ...entry, date, ...changes })
 
+  const setMed = (id: string, value: number | undefined) => {
+    const meds = { ...entry.meds }
+    if (value === undefined) {
+      delete meds[id]
+    } else {
+      meds[id] = value
+    }
+    patch({ meds: Object.keys(meds).length > 0 ? meds : undefined })
+  }
+
   const openDatePicker = () => {
     try {
       dateInputRef.current?.showPicker()
@@ -80,26 +90,19 @@ export default function EntryPage({ entries, settings, onChange }: Props) {
       )}
 
       <div className="mt-2 rounded-xl border border-line bg-card px-4 py-1">
-        {fields.med1 && (
-          <Stepper
-            label={settings.med1Label}
-            value={entry.med1}
-            min={0}
-            max={20}
-            step={0.5}
-            onChange={(value) => patch({ med1: value })}
-          />
-        )}
-        {fields.med2 && (
-          <Stepper
-            label={settings.med2Label}
-            value={entry.med2}
-            min={0}
-            max={20}
-            step={0.5}
-            onChange={(value) => patch({ med2: value })}
-          />
-        )}
+        {settings.meds
+          .filter((med) => med.enabled)
+          .map((med) => (
+            <Stepper
+              key={med.id}
+              label={med.label || hu.settings.medLabelPlaceholder}
+              value={entry.meds?.[med.id]}
+              min={0}
+              max={20}
+              step={0.5}
+              onChange={(value) => setMed(med.id, value)}
+            />
+          ))}
         {fields.alvas && (
           <Stepper
             label={hu.fields.alvas}
@@ -118,6 +121,16 @@ export default function EntryPage({ entries, settings, onChange }: Props) {
             max={5}
             step={1}
             onChange={(value) => patch({ izgalom: value })}
+          />
+        )}
+        {fields.szorongas && (
+          <Stepper
+            label={hu.fields.szorongas}
+            value={entry.szorongas}
+            min={1}
+            max={5}
+            step={1}
+            onChange={(value) => patch({ szorongas: value })}
           />
         )}
         {fields.unalom && (

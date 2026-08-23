@@ -17,6 +17,7 @@ export const hu = {
   fields: {
     alvas: 'Alvás (óra)',
     izgalom: 'Izgalom',
+    szorongas: 'Szorongás',
     unalom: 'Unalom',
     hangulat: 'Hangulat',
     sovargas: 'Sóvárgás',
@@ -46,7 +47,9 @@ export const hu = {
     med1Default: 'Gyógyszer 1',
     med2Default: 'Gyógyszer 2',
     medLabelPlaceholder: 'Mező neve',
-    medsHint: 'A címkék a te leleted szerint — nincs beégetett gyógyszernév.',
+    addMed: 'Új gyógyszermező',
+    medsHint:
+      'A címkék a te leleted szerint — nincs beégetett gyógyszernév. A kikapcsolt mező adata megmarad, és az exportban is benne lesz.',
     fieldsSection: 'Mezők',
     privacy:
       'Minden adat kizárólag ezen a készüléken marad. Az app nem kér internet-hozzáférést — nincs analitika, nincs fiók, nincs felhő.',

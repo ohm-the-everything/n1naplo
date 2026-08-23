@@ -10,7 +10,7 @@ export async function exportCsv(
   entries: Record<string, DayEntry>,
   settings: Settings,
 ): Promise<void> {
-  const csv = buildCsv(Object.values(entries), settings.med1Label, settings.med2Label)
+  const csv = buildCsv(Object.values(entries), settings.meds)
   const fileName = `n1naplo-${todayIso()}.csv`
 
   if (Capacitor.isNativePlatform()) {

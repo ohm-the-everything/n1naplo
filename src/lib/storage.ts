@@ -1,14 +1,16 @@
 import { Preferences } from '@capacitor/preferences'
 import { hu } from '@/i18n/hu'
-import { ALL_FIELDS, type DayEntry, type FieldKey, type Settings } from '@/types'
+import { ALL_FIELDS, type DayEntry, type FieldKey, type Med, type Settings } from '@/types'
 
 const ENTRIES_KEY = 'entries'
 const SETTINGS_KEY = 'settings'
 
 export function defaultSettings(): Settings {
   return {
-    med1Label: hu.settings.med1Default,
-    med2Label: hu.settings.med2Default,
+    meds: [
+      { id: 'med1', label: hu.settings.med1Default, enabled: true },
+      { id: 'med2', label: hu.settings.med2Default, enabled: true },
+    ],
     reminderEnabled: true,
     reminderHour: 21,
     reminderMinute: 0,
@@ -20,9 +22,59 @@ export function defaultSettings(): Settings {
   }
 }
 
+type LegacyEntry = DayEntry & { med1?: number; med2?: number }
+
+// A v0.1 a gyógyszert fix med1/med2 mezőben tárolta — átemeljük a meds térképbe.
+export function migrateEntry(raw: unknown): DayEntry {
+  const { med1, med2, ...entry } = raw as LegacyEntry
+  if (med1 === undefined && med2 === undefined) return entry
+  const meds = { ...entry.meds }
+  if (med1 !== undefined) meds.med1 = med1
+  if (med2 !== undefined) meds.med2 = med2
+  return { ...entry, meds }
+}
+
+type LegacySettings = Partial<Settings> & {
+  med1Label?: string
+  med2Label?: string
+  enabledFields?: Partial<Record<string, boolean>>
+}
+
+export function migrateSettings(raw: unknown): Settings {
+  const base = defaultSettings()
+  if (!raw || typeof raw !== 'object') return base
+  const {
+    med1Label,
+    med2Label,
+    enabledFields: storedFields,
+    meds: storedMeds,
+    ...rest
+  } = raw as LegacySettings
+
+  // v0.1: med1Label/med2Label + enabledFields.med1/med2 → meds lista.
+  const meds: Med[] =
+    storedMeds ??
+    base.meds.map((med, index) => ({
+      ...med,
+      label: (index === 0 ? med1Label : med2Label) ?? med.label,
+      enabled: storedFields?.[med.id] ?? true,
+    }))
+
+  // Az új mezők (pl. szorongás) alapból bekapcsolva jönnek.
+  const enabledFields = { ...base.enabledFields }
+  for (const field of ALL_FIELDS) {
+    const storedValue = storedFields?.[field]
+    if (storedValue !== undefined) enabledFields[field] = storedValue
+  }
+
+  return { ...base, ...rest, meds, enabledFields }
+}
+
 export async function loadEntries(): Promise<Record<string, DayEntry>> {
   const { value } = await Preferences.get({ key: ENTRIES_KEY })
-  return value ? JSON.parse(value) : {}
+  if (!value) return {}
+  const raw = JSON.parse(value) as Record<string, unknown>
+  return Object.fromEntries(Object.entries(raw).map(([date, entry]) => [date, migrateEntry(entry)]))
 }
 
 export async function persistEntries(entries: Record<string, DayEntry>): Promise<void> {
@@ -31,14 +83,7 @@ export async function persistEntries(entries: Record<string, DayEntry>): Promise
 
 export async function loadSettings(): Promise<Settings> {
   const { value } = await Preferences.get({ key: SETTINGS_KEY })
-  if (!value) return defaultSettings()
-  const stored = JSON.parse(value) as Partial<Settings>
-  const base = defaultSettings()
-  return {
-    ...base,
-    ...stored,
-    enabledFields: { ...base.enabledFields, ...stored.enabledFields },
-  }
+  return migrateSettings(value ? JSON.parse(value) : null)
 }
 
 export async function persistSettings(settings: Settings): Promise<void> {
