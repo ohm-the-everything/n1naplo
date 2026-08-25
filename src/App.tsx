@@ -1,3 +1,5 @@
+import { App as CapApp } from '@capacitor/app'
+import { Capacitor } from '@capacitor/core'
 import { useEffect, useState } from 'react'
 import TabBar, { type Tab } from '@/components/TabBar'
 import { syncReminder } from '@/lib/reminder'
@@ -29,6 +31,18 @@ export default function App() {
         void syncReminder(loadedSettings)
       },
     )
+  }, [])
+
+  // Minden előtérbe kerüléskor előretoljuk az emlékeztető-ablakot — így a
+  // 14 napos ütemezés sosem fogy ki, amíg az app néha képernyőre kerül.
+  useEffect(() => {
+    if (!Capacitor.isNativePlatform()) return
+    const listener = CapApp.addListener('resume', () => {
+      void loadSettings().then(syncReminder)
+    })
+    return () => {
+      void listener.then((handle) => handle.remove())
+    }
   }, [])
 
   if (!entries || !settings || !topics) return null

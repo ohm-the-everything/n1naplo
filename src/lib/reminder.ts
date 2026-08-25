@@ -3,30 +3,54 @@ import { LocalNotifications } from '@capacitor/local-notifications'
 import { hu } from '@/i18n/hu'
 import type { Settings } from '@/types'
 
-const REMINDER_ID = 1
+// A plugin ismétlő (`on`) ütemezése hibás: kisüléskor a KÖVETKEZŐ napot gyenge
+// alarmmal ütemezi (setExact(RTC) — nem ébreszt, Doze-ban halasztódik), így ha
+// az app napokig nincs megnyitva, az esti jelzés némán kimarad (Samsungon
+// reprodukálva, 2026-08). Ezért 14 nap egyszeri (`at`) értesítést húzunk fel:
+// mindegyik a plugin erős útján megy (setExactAndAllowWhileIdle, RTC_WAKEUP),
+// reboot után is visszaáll, és minden app-megnyitás/folytatás előretolja az
+// ablakot. NE cseréld vissza `on`-ismétlésre.
+export const REMINDER_WINDOW_DAYS = 14
+const REMINDER_ID_BASE = 100
+const LEGACY_REMINDER_ID = 1
 
-// Napi ismétlődő jelzés. Doze alatt is él (allowWhileIdle), reboot után a
-// plugin boot-receivere állítja vissza.
+export function nextOccurrences(now: Date, hour: number, minute: number, count: number): Date[] {
+  const first = new Date(now.getFullYear(), now.getMonth(), now.getDate(), hour, minute, 0, 0)
+  if (first <= now) first.setDate(first.getDate() + 1)
+  return Array.from({ length: count }, (_, index) => {
+    const date = new Date(first)
+    date.setDate(date.getDate() + index)
+    return date
+  })
+}
+
 export async function syncReminder(settings: Settings): Promise<void> {
   if (!Capacitor.isNativePlatform()) return
 
-  await LocalNotifications.cancel({ notifications: [{ id: REMINDER_ID }] })
+  const ids = [
+    LEGACY_REMINDER_ID,
+    ...Array.from({ length: REMINDER_WINDOW_DAYS }, (_, index) => REMINDER_ID_BASE + index),
+  ]
+  await LocalNotifications.cancel({ notifications: ids.map((id) => ({ id })) })
+  // Az app megnyitása a jelzés célja — a tálcán ülő korábbi emlékeztetők innentől zaj.
+  await LocalNotifications.removeAllDeliveredNotifications()
   if (!settings.reminderEnabled) return
 
   const permission = await LocalNotifications.requestPermissions()
   if (permission.display !== 'granted') return
 
+  const occurrences = nextOccurrences(
+    new Date(),
+    settings.reminderHour,
+    settings.reminderMinute,
+    REMINDER_WINDOW_DAYS,
+  )
   await LocalNotifications.schedule({
-    notifications: [
-      {
-        id: REMINDER_ID,
-        title: hu.reminder.title,
-        body: hu.reminder.body,
-        schedule: {
-          on: { hour: settings.reminderHour, minute: settings.reminderMinute },
-          allowWhileIdle: true,
-        },
-      },
-    ],
+    notifications: occurrences.map((at, index) => ({
+      id: REMINDER_ID_BASE + index,
+      title: hu.reminder.title,
+      body: hu.reminder.body,
+      schedule: { at, allowWhileIdle: true },
+    })),
   })
 }
