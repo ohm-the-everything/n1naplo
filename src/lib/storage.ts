@@ -1,9 +1,17 @@
 import { Preferences } from '@capacitor/preferences'
 import { hu } from '@/i18n/hu'
-import { ALL_FIELDS, type DayEntry, type FieldKey, type Med, type Settings } from '@/types'
+import {
+  ALL_FIELDS,
+  type DayEntry,
+  type FieldKey,
+  type Med,
+  type Settings,
+  type Topic,
+} from '@/types'
 
 const ENTRIES_KEY = 'entries'
 const SETTINGS_KEY = 'settings'
+const TOPICS_KEY = 'topics'
 
 export function defaultSettings(): Settings {
   return {
@@ -88,4 +96,13 @@ export async function loadSettings(): Promise<Settings> {
 
 export async function persistSettings(settings: Settings): Promise<void> {
   await Preferences.set({ key: SETTINGS_KEY, value: JSON.stringify(settings) })
+}
+
+export async function loadTopics(): Promise<Topic[]> {
+  const { value } = await Preferences.get({ key: TOPICS_KEY })
+  return value ? JSON.parse(value) : []
+}
+
+export async function persistTopics(topics: Topic[]): Promise<void> {
+  await Preferences.set({ key: TOPICS_KEY, value: JSON.stringify(topics) })
 }

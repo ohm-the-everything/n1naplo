@@ -14,6 +14,14 @@ export const hu = {
     notePlaceholder: 'Rövid jegyzet, ha van…',
     footer: 'Minden mentve, ahogy írod. A kihagyott mező nem hiba, hanem adatlyuk.',
   },
+  topics: {
+    title: 'Témák a következő rendelésre',
+    placeholder: 'Amit nem akarsz elfelejteni…',
+    add: 'Téma hozzáadása',
+    done: 'Megbeszélve',
+    remove: 'Törlés',
+    empty: 'Ami két rendelés közt eszedbe jut, ide írd — ott úgyis elfelejtenéd.',
+  },
   fields: {
     alvas: 'Alvás (óra)',
     izgalom: 'Izgalom',

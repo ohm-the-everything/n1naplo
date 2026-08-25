@@ -1,17 +1,20 @@
 import { CalendarDays, ChevronLeft, ChevronRight } from 'lucide-react'
 import { useRef, useState } from 'react'
 import Stepper from '@/components/Stepper'
+import TopicsCard from '@/components/TopicsCard'
 import { hu } from '@/i18n/hu'
 import { addDays, formatHu, todayIso } from '@/lib/dates'
-import type { DayEntry, Settings } from '@/types'
+import type { DayEntry, Settings, Topic } from '@/types'
 
 type Props = {
   entries: Record<string, DayEntry>
   settings: Settings
   onChange: (entry: DayEntry) => void
+  topics: Topic[]
+  onTopicsChange: (topics: Topic[]) => void
 }
 
-export default function EntryPage({ entries, settings, onChange }: Props) {
+export default function EntryPage({ entries, settings, onChange, topics, onTopicsChange }: Props) {
   const [date, setDate] = useState(todayIso())
   const dateInputRef = useRef<HTMLInputElement>(null)
   const today = todayIso()
@@ -170,10 +173,12 @@ export default function EntryPage({ entries, settings, onChange }: Props) {
           value={entry.jegyzet ?? ''}
           onChange={(event) => patch({ jegyzet: event.target.value || undefined })}
           placeholder={hu.entry.notePlaceholder}
-          rows={2}
-          className="mt-3 w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px] placeholder:text-muted focus:border-sage focus:outline-none"
+          rows={5}
+          className="mt-3 w-full resize-y rounded-xl border border-line bg-card px-4 py-3 text-[15px] leading-relaxed placeholder:text-muted focus:border-sage focus:outline-none"
         />
       )}
+
+      <TopicsCard topics={topics} onChange={onTopicsChange} />
 
       <p className="mt-3 text-center text-xs text-muted">{hu.entry.footer}</p>
     </div>

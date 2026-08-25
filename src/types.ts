@@ -1,5 +1,8 @@
 export type Med = { id: string; label: string; enabled: boolean }
 
+// Két rendelés közt gyűlő kérdések/témák a következő orvosi vizitre.
+export type Topic = { id: string; text: string; done: boolean }
+
 export type DayEntry = {
   date: string // ISO yyyy-MM-dd
   meds?: Record<string, number> // med id → darab
