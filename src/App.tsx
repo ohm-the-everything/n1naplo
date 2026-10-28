@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import TabBar, { type Tab } from '@/components/TabBar'
 import { hu } from '@/i18n/hu'
 import { emptyDocument, withEntry, withSettings, withTopics } from '@/lib/document'
+import { applyScreenProtection } from '@/lib/protection'
 import { syncReminder } from '@/lib/reminder'
 import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
@@ -36,6 +37,11 @@ export default function App() {
       (error: unknown) => setLoadState(error instanceof StoreCorruptError ? 'corrupt' : 'failed'),
     )
   }, [])
+
+  const { protection } = doc.settings
+  useEffect(() => {
+    void applyScreenProtection(protection)
+  }, [protection])
 
   // Each resume slides the 14-day reminder window forward.
   useEffect(() => {

@@ -198,6 +198,22 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
         <p className="mt-3 text-sm text-muted">{hu.backup.off}</p>
       </section>
 
+      <section className="rounded-xl border border-line bg-card p-4">
+        <h2 className="text-sm font-semibold">{hu.protection.section}</h2>
+        <div className="mt-3 flex items-center justify-between gap-3">
+          <span className="text-[15px] font-medium">{hu.protection.screenshotsTitle}</span>
+          <Toggle
+            checked={settings.protection.allowScreenshots}
+            onChange={(allowScreenshots) =>
+              onSettings({ ...settings, protection: { ...settings.protection, allowScreenshots } })
+            }
+            label={hu.protection.screenshotsTitle}
+          />
+        </div>
+        <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsHow}</p>
+        <p className="mt-1 text-sm">{hu.protection.screenshotsRisk}</p>
+      </section>
+
       <p className="px-2 text-center text-xs text-muted">{hu.settings.privacy}</p>
     </div>
   )
