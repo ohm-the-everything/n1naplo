@@ -58,12 +58,21 @@ export default function App() {
     )
   }
 
+  const replaceDocument = (next: N1Document) => {
+    commit(next)
+    void syncReminder(next.settings)
+  }
+
   if (loadState === 'loading') return null
   if (loadState === 'corrupt') {
     return (
       <RecoveryPage
         onStartEmpty={() => {
           commit(emptyDocument())
+          setLoadState('ready')
+        }}
+        onRestore={(restored) => {
+          replaceDocument(restored)
           setLoadState('ready')
         }}
       />
@@ -125,7 +134,12 @@ export default function App() {
           <ReviewPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
         )}
         {tab === 'settings' && (
-          <SettingsPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
+          <SettingsPage
+            doc={doc}
+            onDocument={replaceDocument}
+            settings={doc.settings}
+            onSettings={changeSettings}
+          />
         )}
         <div style={{ height: 120 }} aria-hidden="true" />
       </main>

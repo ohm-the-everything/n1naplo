@@ -1,20 +1,25 @@
 import { Plus, Share2 } from 'lucide-react'
 import BackupChoice from '@/components/BackupChoice'
+import RestoreFromFile from '@/components/RestoreFromFile'
 import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
-import { exportCsv } from '@/lib/export'
+import { backupFileName, serializeBackup } from '@/lib/backup'
+import { buildCsv } from '@/lib/csv'
+import { todayIso } from '@/lib/dates'
+import { shareFile } from '@/lib/files'
 import { medName } from '@/lib/meds'
-import { ALL_FIELDS, type DayEntry, type Med, type Settings } from '@/types'
+import { ALL_FIELDS, type Med, type N1Document, type Settings } from '@/types'
 
 type Props = {
-  entries: Record<string, DayEntry>
+  doc: N1Document
+  onDocument: (doc: N1Document) => void
   settings: Settings
   onSettings: (settings: Settings, options?: { resyncReminder?: boolean }) => void
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-export default function SettingsPage({ entries, settings, onSettings }: Props) {
+export default function SettingsPage({ doc, onDocument, settings, onSettings }: Props) {
   const changeMed = (index: number, changes: Partial<Med>) => {
     const meds = settings.meds.map((med, i) => (i === index ? { ...med, ...changes } : med))
     onSettings({ ...settings, meds })
@@ -36,7 +41,9 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
         <h2 className="text-sm font-semibold">{hu.settings.exportSection}</h2>
         <button
           type="button"
-          onClick={() => void exportCsv(entries, settings)}
+          onClick={() =>
+            void shareFile(`n1naplo-${todayIso()}.csv`, buildCsv(doc, medName), 'text/csv')
+          }
           className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-sage py-3 font-medium text-white"
         >
           <Share2 size={18} />
@@ -130,6 +137,25 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="rounded-xl border border-line bg-card p-4">
+        <h2 className="text-sm font-semibold">{hu.data.section}</h2>
+        <p className="mt-1 text-sm text-muted">{hu.data.hint}</p>
+        <button
+          type="button"
+          onClick={() =>
+            void shareFile(
+              backupFileName(todayIso()),
+              serializeBackup(doc, new Date().toISOString()),
+              'application/json',
+            )
+          }
+          className="mt-3 w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
+        >
+          {hu.data.save}
+        </button>
+        <RestoreFromFile current={doc} label={hu.data.restore} onApply={onDocument} />
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">

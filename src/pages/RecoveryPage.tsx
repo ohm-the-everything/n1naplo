@@ -1,13 +1,16 @@
 import { useState } from 'react'
 import ConfirmSheet from '@/components/ConfirmSheet'
+import RestoreFromFile from '@/components/RestoreFromFile'
 import { hu } from '@/i18n/hu'
+import { emptyDocument } from '@/lib/document'
+import type { N1Document } from '@/types'
 
 type Props = {
   onStartEmpty: () => void
+  onRestore: (doc: N1Document) => void
 }
 
-// Sérült naplófájl után: a másolat már elkészült, itt csak az dől el, hogyan tovább.
-export default function RecoveryPage({ onStartEmpty }: Props) {
+export default function RecoveryPage({ onStartEmpty, onRestore }: Props) {
   const [confirming, setConfirming] = useState(false)
 
   return (
@@ -17,6 +20,7 @@ export default function RecoveryPage({ onStartEmpty }: Props) {
     >
       <h1 className="text-lg font-semibold">{hu.recovery.title}</h1>
       <p className="mt-3 text-[15px] text-muted">{hu.recovery.body}</p>
+      <RestoreFromFile current={emptyDocument()} label={hu.recovery.restore} onApply={onRestore} />
       <button
         type="button"
         onClick={() => setConfirming(true)}

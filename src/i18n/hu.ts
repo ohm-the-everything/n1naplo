@@ -81,6 +81,23 @@ export const hu = {
       'A kockázat: a napló egészségügyi adat, és kikerül a telefonról. Az iCloud-mentést az Apple titkosítja, de a kulcsot csak akkor nem tartja magánál, ha bekapcsoltad a Speciális adatvédelmet. Aki belép az Apple-fiókodba, egy másik iPhone-ra is visszaállíthatja.',
     off: 'Ha kikapcsolva hagyod, a napló csak ezen a telefonon van.',
   },
+  data: {
+    section: 'Mentés és visszaállítás',
+    hint: 'A teljes napló egy fájlban. Te döntöd el, hova teszed — és ebből jön vissza minden.',
+    save: 'Mentés fájlba',
+    restore: 'Visszaállítás vagy CSV-import',
+    restoreTitle: 'Visszaállítod ezt a mentést?',
+    restoreBody:
+      'A mostani napló ({before} nap) helyére a mentés kerül ({after} nap). Ezt nem lehet visszacsinálni — ha kell a mostani, előbb mentsd fájlba.',
+    restoreConfirm: 'Igen, visszaállítom',
+    importTitle: 'Importálod a CSV-t?',
+    importBody:
+      'A fájl {days} napját beírom (az ott lévőt lecserélve), és {meds} új gyógyszermezőt hozok létre. A többi nap nem változik.',
+    importConfirm: 'Igen, importálom',
+    notN1: 'Ez nem N1 Napló-mentés és nem is N1 Napló-export.',
+    newer: 'Ezt a mentést egy újabb N1 Napló készítette. Frissítsd az appot, és próbáld újra.',
+    invalid: 'A fájlban hibás adat van, ezért nem változtattam semmin.',
+  },
   common: {
     cancel: 'Mégse',
   },
@@ -93,6 +110,7 @@ export const hu = {
     title: 'A napló fájlja megsérült.',
     body: 'Nem írtam felül semmit: a sérült fájlról másolat készült, és az megmarad. Kezdhetsz most üres naplóval.',
     startEmpty: 'Kezdés üres naplóval',
+    restore: 'Visszaállítás mentésből',
     confirmTitle: 'Üres naplóval kezded?',
     confirmBody: 'A sérült fájl másolata megmarad a telefonon. A napló üresen indul.',
     confirmLabel: 'Igen, üresen kezdem',

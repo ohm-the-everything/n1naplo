@@ -1,29 +1,40 @@
-import type { DayEntry, Med } from '@/types'
+import type { Med, N1Document, NumericField } from '@/types'
 
-// Minden gyógyszermező külön oszlop — a kikapcsoltak is, hogy a történeti
-// adat sose maradjon ki a leletbemutatásból.
-export function buildCsv(entries: DayEntry[], meds: Med[]): string {
+export type MedName = (med: Med, index: number) => string
+
+// Column names live in one place: the export writes them, the import recognises them.
+export const FIELD_COLUMNS: readonly (readonly [NumericField, string])[] = [
+  ['alvas', 'alvas_ora'],
+  ['izgalom', 'izgalom'],
+  ['szorongas', 'szorongas'],
+  ['unalom', 'unalom'],
+  ['hangulat', 'hangulat'],
+  ['sovargas', 'sovargas'],
+]
+export const NOTE_COLUMN = 'jegyzet'
+export const DATE_COLUMN = 'datum'
+
+// A medication column is named "label (unit)" when it has a unit, so the CSV itself says
+// what the number means.
+export function medColumn(med: Med, index: number, medName: MedName): string {
+  const name = medName(med, index)
+  return med.unit.trim() ? `${name} (${med.unit.trim()})` : name
+}
+
+// Every medication field gets a column, disabled ones too, so past data is never left out.
+export function buildCsv(doc: N1Document, medName: MedName): string {
+  const { meds } = doc.settings
   const header = [
-    'datum',
-    ...meds.map((med) => med.label),
-    'alvas_ora',
-    'izgalom',
-    'szorongas',
-    'unalom',
-    'hangulat',
-    'sovargas',
-    'jegyzet',
+    DATE_COLUMN,
+    ...meds.map((med, index) => medColumn(med, index, medName)),
+    ...FIELD_COLUMNS.map(([, column]) => column),
+    NOTE_COLUMN,
   ]
-  const sorted = [...entries].sort((a, b) => a.date.localeCompare(b.date))
+  const sorted = Object.values(doc.entries).sort((a, b) => a.date.localeCompare(b.date))
   const rows = sorted.map((entry) => [
     entry.date,
     ...meds.map((med) => num(entry.meds?.[med.id])),
-    num(entry.alvas),
-    num(entry.izgalom),
-    num(entry.szorongas),
-    num(entry.unalom),
-    num(entry.hangulat),
-    num(entry.sovargas),
+    ...FIELD_COLUMNS.map(([field]) => num(entry[field])),
     entry.jegyzet ?? '',
   ])
   return [header, ...rows].map((row) => row.map(escapeField).join(',')).join('\n')
@@ -35,4 +46,36 @@ export function num(value: number | undefined): string {
 
 export function escapeField(field: string): string {
   return /[",\n\r]/.test(field) ? `"${field.replaceAll('"', '""')}"` : field
+}
+
+// RFC 4180: quoted fields with "" and line breaks inside; CRLF or LF; an optional leading
+// BOM. Empty rows (e.g. after the final line break) are dropped.
+export function parseCsv(text: string): string[][] {
+  const rows: string[][] = []
+  let row: string[] = []
+  let field = ''
+  let quoted = false
+  const input = text.replace(/^\uFEFF/, '')
+  for (let i = 0; i < input.length; i++) {
+    const char = input[i]
+    if (quoted) {
+      if (char === '"' && input[i + 1] === '"') {
+        field += '"'
+        i++
+      } else if (char === '"') quoted = false
+      else field += char
+    } else if (char === '"') quoted = true
+    else if (char === ',') {
+      row.push(field)
+      field = ''
+    } else if (char === '\n' || char === '\r') {
+      if (char === '\r' && input[i + 1] === '\n') i++
+      row.push(field)
+      rows.push(row)
+      row = []
+      field = ''
+    } else field += char
+  }
+  if (field !== '' || row.length > 0) rows.push([...row, field])
+  return rows.filter((cells) => cells.some((cell) => cell !== ''))
 }
