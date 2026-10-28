@@ -73,14 +73,18 @@ export function createSaver(platform = currentPlatform()): (doc: N1Document) => 
   }
 }
 
+// A nem kért másolatok (és félbemaradt írásaik) törlése jön először: a visszavonás akkor is
+// érvényes, ha utána a napló írása elbukik.
 async function writeDocument(doc: N1Document, platform: Platform): Promise<void> {
   const data = JSON.stringify(doc)
-  await writeAtomically(home, DOCUMENT_PATH, data)
   const wanted = mirrorPaths(doc.settings.backup, platform)
-  for (const path of platformMirrors(platform)) {
-    if (wanted.includes(path)) await writeAtomically(mirrors, path, data)
-    else await removeIfPresent(mirrors, path)
+  const unwanted = platformMirrors(platform).filter((path) => !wanted.includes(path))
+  for (const path of unwanted) {
+    await removeIfPresent(mirrors, path)
+    await removeIfPresent(mirrors, `${path}.tmp`)
   }
+  await writeAtomically(home, DOCUMENT_PATH, data)
+  for (const path of wanted) await writeAtomically(mirrors, path, data)
 }
 
 async function writeAtomically(directory: Directory, path: string, data: string): Promise<void> {

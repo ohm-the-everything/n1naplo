@@ -191,6 +191,21 @@ describe('createSaver', () => {
     expect(disk.has(TRANSFER_COPY)).toBe(true)
   })
 
+  it('turning a backup off also removes a half-written copy', async () => {
+    disk.set(CLOUD_COPY, '{}')
+    disk.set(`${CLOUD_COPY}.tmp`, '{"version": 2')
+    await createSaver('android')(docWithDay('2026-10-27', 3, { cloud: false, transfer: false }))
+    expect([...disk.keys()].filter((name) => name.startsWith('DATA|'))).toEqual([])
+  })
+
+  it('turning a backup off removes the copy even when the diary write fails', async () => {
+    disk.set(CLOUD_COPY, '{}')
+    failures.add(`write:${TMP}`)
+    const save = createSaver('android')
+    await expect(save(docWithDay('2026-10-27', 3))).rejects.toThrow('disk full')
+    expect(disk.has(CLOUD_COPY)).toBe(false)
+  })
+
   it('on iOS one copy serves both choices', async () => {
     await createSaver('ios')(docWithDay('2026-10-27', 3, { cloud: false, transfer: true }))
     expect(disk.has(IOS_COPY)).toBe(true)
