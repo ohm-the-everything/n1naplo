@@ -8,10 +8,10 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace = "io.tanul.n1naplo"
+    namespace = "org.n1naplo.app"
     compileSdk = rootProject.ext.compileSdkVersion
     defaultConfig {
-        applicationId "io.tanul.n1naplo"
+        applicationId "org.n1naplo.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         // versionCode a -Pvc paraméterből; nélküle 1.

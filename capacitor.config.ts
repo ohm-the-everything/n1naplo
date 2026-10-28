@@ -1,7 +1,7 @@
 import type { CapacitorConfig } from '@capacitor/cli'
 
 const config: CapacitorConfig = {
-  appId: 'io.tanul.n1naplo',
+  appId: 'org.n1naplo.app',
   appName: 'N1 Napló',
   webDir: 'dist',
   // Papír-szín, hogy sose villanjon fehér/idegen háttér a webtartalom előtt.

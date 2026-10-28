@@ -1,4 +1,4 @@
-package io.tanul.n1naplo;
+package org.n1naplo.app;
 
 import com.getcapacitor.BridgeActivity;
 

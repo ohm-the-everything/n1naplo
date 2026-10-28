@@ -2,6 +2,6 @@
 <resources>
     <string name="app_name">N1 Napló</string>
     <string name="title_activity_main">N1 Napló</string>
-    <string name="package_name">io.tanul.n1naplo</string>
-    <string name="custom_url_scheme">io.tanul.n1naplo</string>
+    <string name="package_name">org.n1naplo.app</string>
+    <string name="custom_url_scheme">org.n1naplo.app</string>
 </resources>
