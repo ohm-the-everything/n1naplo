@@ -1,4 +1,5 @@
 import { Plus, Share2 } from 'lucide-react'
+import BackupChoice from '@/components/BackupChoice'
 import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
 import { exportCsv } from '@/lib/export'
@@ -129,6 +130,16 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
             </div>
           ))}
         </div>
+      </section>
+
+      <section className="rounded-xl border border-line bg-card p-4">
+        <h2 className="text-sm font-semibold">{hu.backup.section}</h2>
+        <p className="mt-1 text-sm text-muted">{hu.backup.intro}</p>
+        <BackupChoice
+          value={settings.backup}
+          onChange={(backup) => onSettings({ ...settings, backup })}
+        />
+        <p className="mt-3 text-sm text-muted">{hu.backup.off}</p>
       </section>
 
       <p className="px-2 text-center text-xs text-muted">{hu.settings.privacy}</p>

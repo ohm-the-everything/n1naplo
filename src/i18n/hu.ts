@@ -58,7 +58,28 @@ export const hu = {
       'A címkék a te leleted szerint — nincs beégetett gyógyszernév. A kikapcsolt mező adata megmarad, és az exportban is benne lesz.',
     fieldsSection: 'Mezők',
     privacy:
-      'Minden adat kizárólag ezen a készüléken marad. Az app nem kér internet-hozzáférést — nincs analitika, nincs fiók, nincs felhő.',
+      'Az app nem kér internet-hozzáférést — nincs analitika, nincs fiók, nincs felhő. A napló csak akkor hagyja el a telefont, ha te kéred.',
+  },
+  backup: {
+    section: 'Biztonsági másolat',
+    intro:
+      'A napló alapból csak ezen a telefonon van: ha a telefon elveszik vagy tönkremegy, vele vész. Kérhetsz másolatot a rendszer mentésébe — vagy nem. Bármikor átállíthatod.',
+    cloudTitle: 'Másolat a Google-fiókodba',
+    cloudHow:
+      'Az Android nagyjából naponta egyszer, amikor a telefon pihen, a Google-fiókod privát mappájába menti a napló másolatát, és új telefonon vagy újratelepítéskor visszaállítja. Csak akkor menti, ha van képernyőzárad: azzal titkosítja, így a Google sem tudja elolvasni.',
+    cloudRisk:
+      'A kockázat: a napló egészségügyi adat (gyógyszer, hangulat, sóvárgás), és kikerül a telefonról. Aki ismeri a Google-fiókod jelszavát és a képernyőzárad kódját, egy másik telefonra is visszaállíthatja. Kikapcsoláskor a másolatot azonnal töröljük a telefonról; a fiókban lévő régi mentést az Android a következő mentéssel írja felül, vagy te törölheted a Google-fiókod mentései közül.',
+    transferTitle: 'Átköltözés új telefonra',
+    transferHow:
+      'Új Android-telefon beállításakor a napló közvetlenül átkerül a régiről — kábellel vagy vezeték nélkül, felhő nélkül.',
+    transferRisk:
+      'A kockázat: aki a feloldott telefonodhoz hozzáfér, egy másik telefonra is átmásolhatja a naplót.',
+    iosTitle: 'Másolat az iPhone mentésébe',
+    iosHow:
+      'A napló bekerül az iPhone mentésébe (iCloud vagy számítógép), és új iPhone-ra költözéskor átjön vele.',
+    iosRisk:
+      'A kockázat: a napló egészségügyi adat, és kikerül a telefonról. Az iCloud-mentést az Apple titkosítja, de a kulcsot csak akkor nem tartja magánál, ha bekapcsoltad a Speciális adatvédelmet. Aki belép az Apple-fiókodba, egy másik iPhone-ra is visszaállíthatja.',
+    off: 'Ha kikapcsolva hagyod, a napló csak ezen a telefonon van.',
   },
   common: {
     cancel: 'Mégse',
