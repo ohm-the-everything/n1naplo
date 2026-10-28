@@ -1,5 +1,6 @@
 import { Plus, Share2 } from 'lucide-react'
 import { useState } from 'react'
+import AppLockChoice from '@/components/AppLockChoice'
 import BackupChoice from '@/components/BackupChoice'
 import PassphraseSheet from '@/components/PassphraseSheet'
 import RestoreFromFile from '@/components/RestoreFromFile'
@@ -212,6 +213,12 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
         </div>
         <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsHow}</p>
         <p className="mt-1 text-sm">{hu.protection.screenshotsRisk}</p>
+        <AppLockChoice
+          value={settings.protection.appLock}
+          onChange={(appLock) =>
+            onSettings({ ...settings, protection: { ...settings.protection, appLock } })
+          }
+        />
       </section>
 
       <p className="px-2 text-center text-xs text-muted">{hu.settings.privacy}</p>

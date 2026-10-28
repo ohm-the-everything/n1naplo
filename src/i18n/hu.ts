@@ -121,6 +121,17 @@ export const hu = {
     screenshotsRisk:
       'Ha engedélyezed, a képernyőkép a galériába kerül, onnan pedig bárhova: felhőbe, megosztásba, egy asszisztenshez. Az orvosnak az összefoglaló a jobb út.',
   },
+  lock: {
+    title: 'A napló zárolva.',
+    unlock: 'Feloldás',
+    reason: 'A napló megnyitásához',
+    choiceTitle: 'Zárolás',
+    choiceHow:
+      'Megnyitáskor, és ha az app egy percnél tovább volt a háttérben, a telefonod zárolásával (arc, ujjlenyomat vagy kód) kér azonosítást. Így aki a feloldott telefonodat kézbe veszi, nem jut a naplóhoz a kódod nélkül.',
+    noDeviceLock: 'Ehhez a telefonon képernyőzár kell (kód, minta, ujjlenyomat vagy arc).',
+    turnOn: 'Zárolás bekapcsolása',
+    turnOff: 'Zárolás kikapcsolása',
+  },
   common: {
     cancel: 'Mégse',
   },

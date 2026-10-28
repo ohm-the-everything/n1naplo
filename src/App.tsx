@@ -4,10 +4,12 @@ import { useEffect, useRef, useState } from 'react'
 import TabBar, { type Tab } from '@/components/TabBar'
 import { hu } from '@/i18n/hu'
 import { emptyDocument, withEntry, withSettings, withTopics } from '@/lib/document'
+import { needsUnlock } from '@/lib/lock'
 import { applyScreenProtection } from '@/lib/protection'
 import { syncReminder } from '@/lib/reminder'
 import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
+import LockScreen from '@/pages/LockScreen'
 import RecoveryPage from '@/pages/RecoveryPage'
 import ReviewPage from '@/pages/ReviewPage'
 import SettingsPage from '@/pages/SettingsPage'
@@ -23,6 +25,8 @@ export default function App() {
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
+  const [locked, setLocked] = useState(false)
+  const hiddenAt = useRef(0)
   // Latest document, for rapid successive edits and the resume handler.
   const latest = useRef(doc)
 
@@ -31,6 +35,7 @@ export default function App() {
       (loaded) => {
         latest.current = loaded
         setDoc(loaded)
+        setLocked(loaded.settings.protection.appLock)
         setLoadState('ready')
         void syncReminder(loaded.settings)
       },
@@ -46,11 +51,17 @@ export default function App() {
   // Each resume slides the 14-day reminder window forward.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
-    const listener = CapApp.addListener('resume', () => {
+    const resumed = CapApp.addListener('resume', () => {
       void syncReminder(latest.current.settings)
+      if (needsUnlock(latest.current.settings.protection.appLock, hiddenAt.current, Date.now())) {
+        setLocked(true)
+      }
+    })
+    const paused = CapApp.addListener('pause', () => {
+      hiddenAt.current = Date.now()
     })
     return () => {
-      void listener.then((handle) => handle.remove())
+      for (const listener of [resumed, paused]) void listener.then((handle) => handle.remove())
     }
   }, [])
 
@@ -83,6 +94,7 @@ export default function App() {
       />
     )
   }
+  if (locked) return <LockScreen onUnlocked={() => setLocked(false)} />
   if (loadState === 'failed') {
     return (
       <div
