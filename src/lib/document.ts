@@ -1,6 +1,7 @@
 import { parseIso, toIso } from '@/lib/dates'
 import {
   ALL_FIELDS,
+  type BackupChoice,
   type DayEntry,
   DOCUMENT_VERSION,
   type FieldKey,
@@ -49,6 +50,7 @@ export function emptyDocument(): N1Document {
       lastReviewOpen: null,
       onboardedAt: null,
       locale: 'auto',
+      backup: { cloud: false, transfer: false },
     },
     topics: [],
   }
@@ -160,9 +162,10 @@ function parseSettings(raw: unknown): Settings | null {
   const enabledFields = parseEnabledFields(raw.enabledFields)
   const reminder = parseReminder(raw)
   const marks = parseMarks(raw)
+  const backup = parseBackup(raw.backup)
   if (!meds || new Set(meds.map((med) => med.id)).size !== meds.length) return null
-  if (!enabledFields || !reminder || !marks) return null
-  return { meds, enabledFields, ...reminder, ...marks }
+  if (!enabledFields || !reminder || !marks || !backup) return null
+  return { meds, enabledFields, ...reminder, ...marks, backup }
 }
 
 function parseMed(raw: unknown): Med | null {
@@ -206,4 +209,12 @@ function parseMarks(raw: Raw) {
   if (onboardedAt !== null && !isString(onboardedAt)) return null
   const localeSetting = LOCALE_SETTINGS.find((value) => value === locale)
   return localeSetting ? { lastReviewOpen, onboardedAt, locale: localeSetting } : null
+}
+
+// Régebbi dokumentumban még nincs ilyen beállítás: az ki, nem igen.
+function parseBackup(raw: unknown): BackupChoice | null {
+  if (raw === undefined) return { cloud: false, transfer: false }
+  if (!isRecord(raw)) return null
+  const { cloud, transfer } = raw
+  return isBoolean(cloud) && isBoolean(transfer) ? { cloud, transfer } : null
 }

@@ -42,7 +42,12 @@ export type Settings = {
   lastReviewOpen: string | null
   onboardedAt: string | null // ISO időpont; null = a bevezetés még hátravan
   locale: 'auto' | Locale
+  backup: BackupChoice
 }
+
+// A napló másolata a rendszer mentésébe kerülhet — csak ha a felhasználó maga kéri.
+// cloud: Google-fiók / iCloud; transfer: átköltözés új telefonra. Alapból mindkettő ki.
+export type BackupChoice = { cloud: boolean; transfer: boolean }
 
 export const DOCUMENT_VERSION = 2
 

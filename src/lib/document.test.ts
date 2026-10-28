@@ -38,6 +38,7 @@ function sampleDocument(): N1Document {
       lastReviewOpen: '2026-10-20',
       onboardedAt: '2026-10-01T19:00:00.000Z',
       locale: 'hu',
+      backup: { cloud: true, transfer: false },
     },
     topics: [{ id: 't1', text: 'Délutáni mélypont', done: false }],
   }
@@ -94,6 +95,25 @@ describe('parseDocument', () => {
   it('calls an object without a version not-n1', () => {
     expect(parseDocument({ entries: {} })).toEqual({ ok: false, error: 'not-n1' })
     expect(parseDocument([1, 2])).toEqual({ ok: false, error: 'not-n1' })
+  })
+})
+
+describe('backup choices', () => {
+  it('start off in a new diary', () => {
+    expect(emptyDocument().settings.backup).toEqual({ cloud: false, transfer: false })
+  })
+
+  it('read as off when an older document does not have them', () => {
+    const doc = sampleDocument() as unknown as { settings: Record<string, unknown> }
+    const { backup: _dropped, ...settings } = doc.settings
+    const parsed = parseDocument({ ...doc, settings })
+    expect(parsed.ok && parsed.value.settings.backup).toEqual({ cloud: false, transfer: false })
+  })
+
+  it('reject a choice that is not true or false', () => {
+    const doc = sampleDocument()
+    const raw = { ...doc, settings: { ...doc.settings, backup: { cloud: 'yes', transfer: false } } }
+    expect(parseDocument(raw)).toEqual({ ok: false, error: 'invalid' })
   })
 })
 

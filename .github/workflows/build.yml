@@ -26,6 +26,9 @@ jobs:
         run: npx biome check src/
       - name: Tests
         run: npx vitest run
+      - name: Ethics check
+        # Az ETHICS.md ígéreteinek őre (scripts/ethics-check.mjs).
+        run: node scripts/ethics-check.mjs
 
   # Debug APK artifactként + az ígéret őre: nincs INTERNET permission.
   android:
@@ -55,12 +58,13 @@ jobs:
         run: |
           test -f android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
           ! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/
-      - name: No-backup guard
-        # A napló nem kerülhet felhős mentésbe vagy eszközök közti átvitelbe.
+      - name: Backup-rules guard
+        # A mentésbe csak a felhasználó által kért másolat kerülhet: a merge-elt manifest
+        # az ethics-check által őrzött szabályfájlokra mutat.
         run: |
           m=android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
-          grep -q 'android:allowBackup="false"' "$m"
           grep -q 'android:dataExtractionRules="@xml/data_extraction_rules"' "$m"
+          grep -q 'android:fullBackupContent="@xml/backup_rules"' "$m"
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
