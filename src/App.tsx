@@ -10,6 +10,7 @@ import { type ReminderStatus, requestReminderPermission, syncReminder } from '@/
 import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
 import LockScreen from '@/pages/LockScreen'
+import OnboardingPage from '@/pages/OnboardingPage'
 import RecoveryPage from '@/pages/RecoveryPage'
 import ReviewPage from '@/pages/ReviewPage'
 import SettingsPage from '@/pages/SettingsPage'
@@ -128,6 +129,15 @@ export default function App() {
     if (!options?.resyncReminder) return
     const allowed = settings.reminderEnabled ? requestReminderPermission() : Promise.resolve(false)
     void allowed.then(() => syncReminder(settings, hu)).then(setReminderStatus)
+  }
+
+  if (doc.settings.onboardedAt === null) {
+    return (
+      <OnboardingPage
+        settings={doc.settings}
+        onDone={(settings) => changeSettings(settings, { resyncReminder: true })}
+      />
+    )
   }
 
   return (

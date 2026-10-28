@@ -164,6 +164,27 @@ export const hu = {
     plain: 'A PDF és a CSV nem titkosított — az orvosodnak szól. Csak oda küldd, ahova szánod.',
     empty: 'Ebben az időszakban nincs adat. Ez nem hiba, hanem adatlyuk.',
   },
+  onboarding: {
+    step: '{n}/{total}',
+    next: 'Tovább',
+    back: 'Vissza',
+    whatTitle: 'Napi egy sor. Ennyi.',
+    whatBody:
+      'Gyógyszer, alvás, izgalom, szorongás, unalom, hangulat, sóvárgás, egy rövid jegyzet — húsz másodperc egy nap. Hetek alatt kirajzolódik, amit a következő rendelésre vihetsz.',
+    notTitle: 'Ami nem',
+    notBody:
+      'Nem orvostechnikai eszköz: nem diagnosztizál, nem kezel, nem ad tanácsot az adagról. A naplót senki nem figyeli. Ha bajban vagy, a Beállítások › Segítség alatt találsz számokat.',
+    dataTitle: 'Az adataid',
+    dataBody:
+      'A napló ezen a telefonon van. Az appnak nincs internet-engedélye, így semmit nem tud elküldeni. Képernyőkép alapból tiltva. Mentést te készítesz, fájlba, amikor akarsz.',
+    backupTitle: 'Másolat a rendszer mentésébe?',
+    lockTitle: 'Zárolás',
+    reminderTitle: 'Esti jelzés',
+    reminderBody:
+      'Este 21:00-kor szólhatok, ha kéred. A kitöltés lehetséges, nyomás nincs — a kihagyott nap adatlyuk, nem hiba. Az időpontot később átállíthatod.',
+    reminderYes: 'Kérek esti jelzést (21:00)',
+    reminderNo: 'Most nem',
+  },
   common: {
     cancel: 'Mégse',
   },
