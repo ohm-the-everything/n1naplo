@@ -12,9 +12,7 @@
   --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
 
-/* Nincs saját `* { margin: 0; padding: 0 }` reset: a Tailwind preflight (base
-   layer) már nulláz. Egy rétegen kívüli reset minden layerbeli utility-t
-   felülír, így a px-5, mt-2, mx-auto és társai csendben 0-k lennének. */
+/* No `* { margin: 0 }` reset: unlayered, it would override every Tailwind utility. */
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -29,8 +27,7 @@ body {
   overflow-x: hidden;
 }
 
-/* Safe area: env() csak itt, máshol a változót használd (calc()-ban az env()
-   megbízhatatlan a WebView-ban — forni-konvenció). */
+/* env() only here; use the variables elsewhere (env() in calc() is unreliable in WebView). */
 :root {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);

@@ -27,10 +27,8 @@ jobs:
       - name: Tests
         run: npx vitest run
       - name: Ethics check
-        # Az ETHICS.md ígéreteinek őre (scripts/ethics-check.mjs).
         run: node scripts/ethics-check.mjs
 
-  # Debug APK artifactként + az ígéret őre: nincs INTERNET permission.
   android:
     needs: check
     runs-on: ubuntu-latest
@@ -53,14 +51,12 @@ jobs:
         working-directory: android
         run: ./gradlew assembleDebug
       - name: No-INTERNET guard
-        # A termékígéret: az app soha nem kér INTERNET permissiont. Ha bármi
-        # (plugin, dependency) visszahozná a merge-elt manifestbe, a build bukik.
+        # Core promise: fails if any plugin merges INTERNET back.
         run: |
           test -f android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
           ! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/
       - name: Backup-rules guard
-        # A mentésbe csak a felhasználó által kért másolat kerülhet: a merge-elt manifest
-        # az ethics-check által őrzött szabályfájlokra mutat.
+        # The manifest must point at the rules ethics-check guards.
         run: |
           m=android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
           grep -q 'android:dataExtractionRules="@xml/data_extraction_rules"' "$m"

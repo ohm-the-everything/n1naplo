@@ -1,4 +1,4 @@
-// Minden UI-szöveg itt él — tanul.io-hang: száraz, meleg, nyomás nélkül.
+// House voice: dry, warm, no pressure.
 export const hu = {
   appName: 'N1 Napló',
   tabs: {

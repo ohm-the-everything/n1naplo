@@ -56,8 +56,7 @@ export function emptyDocument(): N1Document {
   }
 }
 
-// Az egyetlen kapu: a tárolt fájl, egy mentés és egy CSV-import is ezen megy át.
-// Érvénytelen állapotot elutasít, sosem dob el csendben; az ismeretlen kulcsokat elhagyja.
+// The one gate for the stored file, backups and CSV imports.
 export function parseDocument(raw: unknown): Parsed<N1Document> {
   if (!isRecord(raw) || typeof raw.version !== 'number') return fail('not-n1')
   if (raw.version > DOCUMENT_VERSION) return fail('newer-version')
@@ -105,7 +104,7 @@ function isRecord(value: unknown): value is Raw {
 const isString = (value: unknown): value is string => typeof value === 'string'
 const isBoolean = (value: unknown): value is boolean => typeof value === 'boolean'
 
-// Valódi naptári nap: a 2026-02-30 nem az, mert a Date átfordítaná március 2-re.
+// Date would roll 2026-02-30 over to March 2.
 function isRealDate(value: unknown): value is string {
   return isString(value) && /^\d{4}-\d{2}-\d{2}$/.test(value) && toIso(parseIso(value)) === value
 }
@@ -181,7 +180,7 @@ function parseTopic(raw: unknown): Topic | null {
   return isString(id) && isString(text) && isBoolean(done) ? { id, text, done } : null
 }
 
-// Egy később hozzáadott mező alapból bekapcsolva jön, ha a tárolt beállítás még nem ismeri.
+// A field added later defaults to on in older documents.
 function parseEnabledFields(raw: unknown): Record<FieldKey, boolean> | null {
   if (!isRecord(raw)) return null
   const fields = allFieldsOn()
@@ -211,7 +210,7 @@ function parseMarks(raw: Raw) {
   return localeSetting ? { lastReviewOpen, onboardedAt, locale: localeSetting } : null
 }
 
-// Régebbi dokumentumban még nincs ilyen beállítás: az ki, nem igen.
+// Older documents predate the choice: off.
 function parseBackup(raw: unknown): BackupChoice | null {
   if (raw === undefined) return { cloud: false, transfer: false }
   if (!isRecord(raw)) return null

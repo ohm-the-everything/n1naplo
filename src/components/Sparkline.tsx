@@ -8,8 +8,7 @@ const WIDTH = 320
 const HEIGHT = 44
 const PAD = 4
 
-// Egyszerű sparkline: 2px-es vonal, a kitöltetlen napok szakadások (adatlyuk),
-// a magukban álló pontok pöttyök. Nincs tengely, nincs rács.
+// Missing days are gaps; isolated points show as dots.
 export default function Sparkline({ values, min, max }: Props) {
   const n = values.length
   const range = max - min || 1
@@ -39,8 +38,7 @@ export default function Sparkline({ values, min, max }: Props) {
       {runs.map((points) => (
         <polyline
           key={`run-${points[0].i}`}
-          // Egypontos szakasz is polyline: a kerek vonalvég pöttyként rajzolja ki,
-          // és a non-scaling-stroke miatt nem torzul a széthúzott viewBox-ban.
+          // A one-point polyline: the round cap draws a dot that non-scaling-stroke keeps round.
           points={
             points.length === 1
               ? `${x(points[0].i)},${y(points[0].v)} ${x(points[0].i) + 0.01},${y(points[0].v)}`

@@ -8,8 +8,7 @@ type Props = {
   onChange: (value: Choice) => void
 }
 
-// A döntés a felhasználóé: mindkét lehetőség mellett ott a kockázat, még bekapcsolás előtt.
-// iOS-en egy kapcsoló, mert ott a mentés és az átköltözés ugyanaz a mechanizmus.
+// One switch on iOS: iCloud backup and migration are the same mechanism there.
 export default function BackupChoice({ value, onChange }: Props) {
   if (Capacitor.getPlatform() === 'ios') {
     const on = value.cloud || value.transfer

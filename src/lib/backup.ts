@@ -29,8 +29,7 @@ export function readBackup(text: string): Parsed<N1Document> {
   return parseDocument(raw.document)
 }
 
-// A backup brings the diary back, but the system-backup choice and onboarding were decided
-// on this phone, and a file must not override them.
+// The backup and onboarding choices belong to this phone, not to the file.
 export function applyRestore(current: N1Document, restored: N1Document): N1Document {
   const { backup, onboardedAt } = current.settings
   return withSettings(restored, { ...restored.settings, backup, onboardedAt })
@@ -40,8 +39,7 @@ export type CsvMerge = { doc: N1Document; days: number; addedMeds: string[] }
 
 type Reader = (entry: DayEntry, cell: string) => void
 
-// CSV import: each row replaces its own day and leaves the other days alone. The result goes
-// through the same gate as every other input, so one bad value rejects the whole import.
+// Each row replaces its day; one bad value rejects the whole import.
 export function mergeCsv(text: string, doc: N1Document, medName: MedName): Parsed<CsvMerge> {
   const [header, ...rows] = parseCsv(text)
   if (!header || header[0].trim().toLowerCase() !== DATE_COLUMN) {
@@ -102,7 +100,6 @@ function addMed(meds: Med[], addedMeds: string[], label: string): Med {
   return med
 }
 
-// An empty cell means no data. Anything else must be a number; the gate rejects NaN.
 function toNumber(cell: string): number | undefined {
   const trimmed = cell.trim()
   return trimmed === '' ? undefined : Number(trimmed)
@@ -112,8 +109,7 @@ export type ImportPlan =
   | { kind: 'restore'; doc: N1Document; daysBefore: number; daysAfter: number }
   | ({ kind: 'csv' } & CsvMerge)
 
-// One file picker serves both: a CSV export (recognised by its header, not its name) is
-// merged day by day; anything else must be a backup, which replaces the whole diary.
+// A CSV is recognised by its header, not its file name.
 export function readImport(
   file: { name: string; text: string },
   current: N1Document,

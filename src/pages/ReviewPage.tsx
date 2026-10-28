@@ -37,8 +37,7 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   const gated =
     !unlocked && lastOpen !== null && lastOpen !== today && daysBetween(lastOpen, today) < 7
 
-  // A visszanézés hetente egyszer "nyílik" igazán — a valódi megnyitás napját
-  // jegyezzük fel, a kapu ahhoz méri a hetet.
+  // The weekly gate measures from the last real open.
   useEffect(() => {
     if (hasData && !gated && lastOpen !== today) {
       onSettings({ ...settings, lastReviewOpen: today })

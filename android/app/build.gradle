@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-// Release-aláírás: az android/keystore.properties-ből, ha létezik (gitignore-olva); különben aláíratlan.
+// Release signing from keystore.properties when present; unsigned otherwise.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) {
@@ -14,7 +14,6 @@ android {
         applicationId "org.n1naplo.app"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // versionCode a -Pvc paraméterből; nélküle 1.
         versionCode (project.hasProperty('vc') ? project.property('vc').toString().toInteger() : 1)
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

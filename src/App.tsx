@@ -14,7 +14,7 @@ import type { DayEntry, N1Document, Settings, Topic } from '@/types'
 
 type LoadState = 'loading' | 'ready' | 'corrupt' | 'failed'
 
-// Egyetlen író az egész appban: minden változás ezen át, sorban kerül a fájlba.
+// Single writer for the whole app.
 const save = createSaver()
 
 export default function App() {
@@ -22,7 +22,7 @@ export default function App() {
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
-  // A legutóbbi dokumentum a gyors egymásutáni változásokhoz és a resume-hoz.
+  // Latest document, for rapid successive edits and the resume handler.
   const latest = useRef(doc)
 
   useEffect(() => {
@@ -37,8 +37,7 @@ export default function App() {
     )
   }, [])
 
-  // Minden előtérbe kerüléskor előretoljuk az emlékeztető-ablakot — így a
-  // 14 napos ütemezés sosem fogy ki, amíg az app néha képernyőre kerül.
+  // Each resume slides the 14-day reminder window forward.
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
     const listener = CapApp.addListener('resume', () => {

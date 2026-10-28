@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import type { BackupChoice } from '@/types'
 import { emptyDocument, withEntry, withSettings } from './document'
 
-// Memóriabeli fájlrendszer a @capacitor/filesystem helyett: "könyvtár|útvonal" → tartalom.
+// In-memory stand-in for @capacitor/filesystem: "directory|path" → contents.
 const disk = new Map<string, string>()
 const failures = new Set<string>()
 let renameOverwrites = true
@@ -14,7 +14,7 @@ vi.mock('@capacitor/filesystem', () => ({
   Directory: { LibraryNoCloud: 'LIBRARY_NO_CLOUD', Data: 'DATA' },
   Encoding: { UTF8: 'utf8' },
   Filesystem: {
-    // Mint a valódi: a nem létező könyvtár listázása hibát dob.
+    // Like the plugin: listing a missing directory throws.
     readdir: async ({ path, directory }: At) => {
       const prefix = `${directory}|${path ? `${path}/` : ''}`
       const names = [...disk.keys()]

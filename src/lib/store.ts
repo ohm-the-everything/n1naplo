@@ -6,14 +6,10 @@ import type { BackupChoice, N1Document } from '@/types'
 export const DOCUMENT_PATH = 'n1naplo.json'
 const TMP_PATH = `${DOCUMENT_PATH}.tmp`
 
-// A napló a mentésből kizárt könyvtárban él (iOS: Library/NoCloud; Androidon az app
-// saját fájljai, amiket a manifest szabályai zárnak ki a mentésből).
 const home = Directory.LibraryNoCloud
 const encoding = Encoding.UTF8
 
-// A rendszer mentésébe csak a felhasználó kérésére kerül másolat, a Directory.Data alá.
-// Androidon célonként külön mappa, mert a manifest mappánként engedi a felhős mentést
-// és az átköltözést; iOS-en egy mappa, mert ott a kettő ugyanaz a mentés.
+// Opt-in backup copies: a folder per target on Android (backup rules are per folder), one on iOS.
 const CLOUD_MIRROR = 'backup/cloud/n1naplo.json'
 const TRANSFER_MIRROR = 'backup/transfer/n1naplo.json'
 const IOS_MIRROR = 'backup/n1naplo.json'
@@ -36,15 +32,14 @@ export class StoreCorruptError extends Error {
   readonly reason: ParseError
 
   constructor(reason: ParseError) {
-    super(`A tárolt napló nem olvasható (${reason}).`)
+    super(`Stored diary is unreadable (${reason}).`)
     this.name = 'StoreCorruptError'
     this.reason = reason
   }
 }
 
-// Betöltés sorrendje: a fő fájl; ha nincs, a félbemaradt mentés (tmp); ha az sincs, a
-// rendszer mentéséből visszaállt másolat (új vagy visszaállított telefon); végül üres
-// napló. Sérült fájlt sosem írunk felül: félretesszük egy másolatba, és jelezzük.
+// Main file, then an interrupted save, then a copy restored by system backup, then empty.
+// A corrupt file is never overwritten: it is copied aside and reported.
 export async function loadDocument(platform = currentPlatform()): Promise<N1Document> {
   const files = await listFiles(home)
   if (files.has(DOCUMENT_PATH)) return readStrict(home, DOCUMENT_PATH)
@@ -61,9 +56,7 @@ export async function loadDocument(platform = currentPlatform()): Promise<N1Docu
   return emptyDocument()
 }
 
-// Egyetlen író: a mentések sorban futnak, mindegyik akkor teljesül, amikor az ő
-// dokumentuma (és a kért másolatai) a lemezen vannak. Egy elbukott mentés nem akasztja
-// meg a következőt.
+// Saves run in order; a failed one does not block the next.
 export function createSaver(platform = currentPlatform()): (doc: N1Document) => Promise<void> {
   let queue: Promise<void> = Promise.resolve()
   return (doc) => {
@@ -73,8 +66,7 @@ export function createSaver(platform = currentPlatform()): (doc: N1Document) => 
   }
 }
 
-// A nem kért másolatok (és félbemaradt írásaik) törlése jön először: a visszavonás akkor is
-// érvényes, ha utána a napló írása elbukik.
+// Revoke first, so an opt-out holds even if the diary write fails.
 async function writeDocument(doc: N1Document, platform: Platform): Promise<void> {
   const data = JSON.stringify(doc)
   const wanted = mirrorPaths(doc.settings.backup, platform)
@@ -93,8 +85,7 @@ async function writeAtomically(directory: Directory, path: string, data: string)
   try {
     await rename(directory, tmp, path)
   } catch {
-    // Ahol a rename nem ír felül: törlés, aztán csere. Ha közben megszakad, a tmp marad
-    // meg, és a betöltés azt emeli elő.
+    // Where rename won't overwrite. A crash in between leaves tmp, which load promotes.
     await Filesystem.deleteFile({ path, directory })
     await rename(directory, tmp, path)
   }
@@ -138,7 +129,7 @@ async function exists(directory: Directory, path: string): Promise<boolean> {
   return files.has(path.slice(slash + 1))
 }
 
-// A nem létező könyvtárban nincs semmi (a napló könyvtára az első mentésig nem létezik).
+// The directory does not exist before the first save.
 async function listFiles(directory: Directory, path = ''): Promise<Set<string>> {
   try {
     const { files } = await Filesystem.readdir({ path, directory })

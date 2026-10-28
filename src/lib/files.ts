@@ -2,8 +2,6 @@ import { Capacitor } from '@capacitor/core'
 import { Directory, Encoding, Filesystem } from '@capacitor/filesystem'
 import { Share } from '@capacitor/share'
 
-// Hands a file to the system share sheet (native) or downloads it (browser, during
-// development). The copy goes to the cache directory, which is never backed up.
 export async function shareFile(name: string, data: string | Uint8Array, mime: string) {
   if (Capacitor.isNativePlatform()) {
     const text = typeof data === 'string'
@@ -25,7 +23,6 @@ export async function shareFile(name: string, data: string | Uint8Array, mime: s
   URL.revokeObjectURL(url)
 }
 
-// Opens the system file picker; resolves null when the user cancels.
 export function pickTextFile(accept: string): Promise<{ name: string; text: string } | null> {
   return new Promise((resolve) => {
     const input = document.createElement('input')

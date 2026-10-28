@@ -2,7 +2,6 @@ import type { Med, N1Document, NumericField } from '@/types'
 
 export type MedName = (med: Med, index: number) => string
 
-// Column names live in one place: the export writes them, the import recognises them.
 export const FIELD_COLUMNS: readonly (readonly [NumericField, string])[] = [
   ['alvas', 'alvas_ora'],
   ['izgalom', 'izgalom'],
@@ -14,14 +13,12 @@ export const FIELD_COLUMNS: readonly (readonly [NumericField, string])[] = [
 export const NOTE_COLUMN = 'jegyzet'
 export const DATE_COLUMN = 'datum'
 
-// A medication column is named "label (unit)" when it has a unit, so the CSV itself says
-// what the number means.
 export function medColumn(med: Med, index: number, medName: MedName): string {
   const name = medName(med, index)
   return med.unit.trim() ? `${name} (${med.unit.trim()})` : name
 }
 
-// Every medication field gets a column, disabled ones too, so past data is never left out.
+// Disabled medication fields are exported too.
 export function buildCsv(doc: N1Document, medName: MedName): string {
   const { meds } = doc.settings
   const header = [
@@ -48,8 +45,7 @@ export function escapeField(field: string): string {
   return /[",\n\r]/.test(field) ? `"${field.replaceAll('"', '""')}"` : field
 }
 
-// RFC 4180: quoted fields with "" and line breaks inside; CRLF or LF; an optional leading
-// BOM. Empty rows (e.g. after the final line break) are dropped.
+// RFC 4180, with optional BOM; empty rows are dropped.
 export function parseCsv(text: string): string[][] {
   const rows: string[][] = []
   let row: string[] = []

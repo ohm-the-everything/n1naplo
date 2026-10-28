@@ -18,8 +18,7 @@ export default function Scatter({ points, xMin, xMax, yMin, yMax, xLabel, yLabel
   const px = (v: number) => PAD + ((WIDTH - 2 * PAD) * (v - xMin)) / xRange
   const py = (v: number) => HEIGHT - PAD - ((HEIGHT - 2 * PAD) * (v - yMin)) / yRange
 
-  // A diszkrét skálákon az azonos (x,y) napok egy jellé olvadnak,
-  // a jel mérete a napok számát hordozza.
+  // Days with the same (x, y) merge into one mark sized by count.
   const grouped = new Map<string, { x: number; y: number; count: number }>()
   for (const point of points) {
     const key = `${point.x}|${point.y}`

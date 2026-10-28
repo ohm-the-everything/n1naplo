@@ -8,8 +8,7 @@ type Props = {
   onCancel: () => void
 }
 
-// Megerősítés az oldalon belül — minden romboló lépés előtt (visszaállítás, import, üres
-// kezdés). Sosem window.confirm: az natív, stílus nélküli és megszakítja az appot.
+// Never window.confirm: it blocks the WebView and cannot be styled.
 export default function ConfirmSheet({ title, body, confirmLabel, onConfirm, onCancel }: Props) {
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-ink/30" role="presentation">

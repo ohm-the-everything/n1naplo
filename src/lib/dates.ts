@@ -8,8 +8,7 @@ export function todayIso(): string {
   return toIso(new Date())
 }
 
-// Helyi időzóna szerint értelmezett ISO-dátum — new Date('yyyy-MM-dd') UTC-ként
-// parse-olna, ami éjfél körül napot csúsztatna.
+// Local time: new Date('yyyy-MM-dd') parses as UTC and shifts the day near midnight.
 export function parseIso(iso: string): Date {
   const [year, month, day] = iso.split('-').map(Number)
   return new Date(year, month - 1, day)

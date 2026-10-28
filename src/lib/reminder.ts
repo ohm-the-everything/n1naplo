@@ -3,13 +3,9 @@ import { LocalNotifications } from '@capacitor/local-notifications'
 import { hu } from '@/i18n/hu'
 import type { Settings } from '@/types'
 
-// A plugin ismétlő (`on`) ütemezése hibás: kisüléskor a KÖVETKEZŐ napot gyenge
-// alarmmal ütemezi (setExact(RTC) — nem ébreszt, Doze-ban halasztódik), így ha
-// az app napokig nincs megnyitva, az esti jelzés némán kimarad (Samsungon
-// reprodukálva, 2026-08). Ezért 14 nap egyszeri (`at`) értesítést húzunk fel:
-// mindegyik a plugin erős útján megy (setExactAndAllowWhileIdle, RTC_WAKEUP),
-// reboot után is visszaáll, és minden app-megnyitás/folytatás előretolja az
-// ablakot. NE cseréld vissza `on`-ismétlésre.
+// Not the plugin's `on` repeat: it reschedules via a weak setExact(RTC) alarm that Doze
+// defers, so reminders silently stopped (Samsung, 2026-08). Instead, 14 one-shot `at`
+// alarms (setExactAndAllowWhileIdle, survive reboot), slid forward on every open.
 export const REMINDER_WINDOW_DAYS = 14
 const REMINDER_ID_BASE = 100
 const LEGACY_REMINDER_ID = 1
@@ -32,7 +28,7 @@ export async function syncReminder(settings: Settings): Promise<void> {
     ...Array.from({ length: REMINDER_WINDOW_DAYS }, (_, index) => REMINDER_ID_BASE + index),
   ]
   await LocalNotifications.cancel({ notifications: ids.map((id) => ({ id })) })
-  // Az app megnyitása a jelzés célja — a tálcán ülő korábbi emlékeztetők innentől zaj.
+  // Opening the app is what the reminder asked for; older ones in the tray are noise.
   await LocalNotifications.removeAllDeliveredNotifications()
   if (!settings.reminderEnabled) return
 

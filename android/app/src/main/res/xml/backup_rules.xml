@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 9–11 (minSdk 28). Ugyanaz a két kért másolat: a felhőbe csak végponttól
-     végpontig titkosítva, telefonról telefonra csak közvetlen átvitelnél. -->
+<!-- Android 9–11: the opt-in copies only; cloud only end-to-end encrypted. -->
 <full-backup-content>
     <include domain="file" path="backup/cloud/" requireFlags="clientSideEncryption" />
     <include domain="file" path="backup/transfer/" requireFlags="deviceToDeviceTransfer" />

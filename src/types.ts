@@ -1,10 +1,8 @@
 export type Locale = 'hu' | 'en'
 
-// A címke és az egység üres is lehet: a felület ilyenkor a nyelvi helyőrzőt mutatja
-// („Gyógyszer 1"). Az egység zárolt, amint a mezőben van adat (medHasValues).
+// Empty label: the UI shows "Gyógyszer N". The unit locks once the field has values.
 export type Med = { id: string; label: string; unit: string; enabled: boolean }
 
-// Két rendelés közt gyűlő kérdések/témák a következő orvosi vizitre.
 export type Topic = { id: string; text: string; done: boolean }
 
 export type DayEntry = {
@@ -40,18 +38,16 @@ export type Settings = {
   reminderMinute: number
   enabledFields: Record<FieldKey, boolean>
   lastReviewOpen: string | null
-  onboardedAt: string | null // ISO időpont; null = a bevezetés még hátravan
+  onboardedAt: string | null // null until onboarding is done
   locale: 'auto' | Locale
   backup: BackupChoice
 }
 
-// A napló másolata a rendszer mentésébe kerülhet — csak ha a felhasználó maga kéri.
-// cloud: Google-fiók / iCloud; transfer: átköltözés új telefonra. Alapból mindkettő ki.
+// Opt-in copies for system backup and phone-to-phone transfer; both off by default.
 export type BackupChoice = { cloud: boolean; transfer: boolean }
 
 export const DOCUMENT_VERSION = 2
 
-// A teljes napló — ez megy fájlba, mentésbe, és ez jön vissza mindenhonnan.
 export type N1Document = {
   version: typeof DOCUMENT_VERSION
   entries: Record<string, DayEntry>
@@ -59,7 +55,7 @@ export type N1Document = {
   topics: Topic[]
 }
 
-// A teljesen üres sor adatlyuk, nem tárolt nulla.
+// An all-empty row is a data gap, not a stored zero.
 export function isEmptyEntry(entry: DayEntry): boolean {
   const hasMed = Object.values(entry.meds ?? {}).some((value) => value !== undefined)
   return (

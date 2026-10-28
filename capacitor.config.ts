@@ -4,7 +4,7 @@ const config: CapacitorConfig = {
   appId: 'org.n1naplo.app',
   appName: 'N1 Napló',
   webDir: 'dist',
-  // Papír-szín, hogy sose villanjon fehér/idegen háttér a webtartalom előtt.
+  // Paper colour, so no white flash shows before the web content.
   backgroundColor: '#FAF6EF',
   android: {
     backgroundColor: '#FAF6EF',

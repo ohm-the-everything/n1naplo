@@ -1,8 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Android 12+. A napló maga sosem kerül mentésbe: csak az a másolat, amit a felhasználó
-     kifejezetten kért (src/lib/store.ts). A felhős mentés csak titkosítva fut (képernyőzár
-     nélkül sehogy); az átköltözés csak a saját mappáját viszi. Az include nélküli szekció
-     "mindent" jelentene — a scripts/ethics-check.mjs ezt is figyeli. -->
+<!-- Opt-in copies only (src/lib/store.ts). A section without an include would mean
+     everything; scripts/ethics-check.mjs guards this. -->
 <data-extraction-rules>
     <cloud-backup disableIfNoEncryptionCapabilities="true">
         <include domain="file" path="backup/cloud/" />
