@@ -12,6 +12,7 @@ export default defineConfig({
   },
   test: {
     environment: 'node',
+    env: { TZ: 'Europe/Budapest' },
     include: ['src/**/*.test.ts', 'scripts/**/*.test.mjs'],
   },
 })

@@ -50,6 +50,10 @@ export const hu = {
     reminderLabel: 'Esti emlékeztető',
     reminderHint: 'Szólok este. Nyomás nincs.',
     reminderTime: 'Időpont',
+    reminderDenied:
+      'A telefon most nem enged értesítést az N1 Naplónak. A telefon beállításaiban engedélyezheted: Értesítések › N1 Napló.',
+    reminderInexact: 'A jelzés pár percet késhet.',
+    reminderExact: 'Pontos időzítés engedélyezése',
     medsSection: 'Gyógyszermezők',
     medFallback: 'Gyógyszer',
     unitPlaceholder: 'pl. 10 mg tabletta',

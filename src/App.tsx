@@ -6,7 +6,7 @@ import { hu } from '@/i18n/hu'
 import { emptyDocument, withEntry, withSettings, withTopics } from '@/lib/document'
 import { needsUnlock } from '@/lib/lock'
 import { applyScreenProtection } from '@/lib/protection'
-import { syncReminder } from '@/lib/reminder'
+import { type ReminderStatus, requestReminderPermission, syncReminder } from '@/lib/reminder'
 import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
 import LockScreen from '@/pages/LockScreen'
@@ -28,6 +28,7 @@ export default function App() {
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
   const [locked, setLocked] = useState(false)
+  const [reminderStatus, setReminderStatus] = useState<ReminderStatus>('off')
   const [concealed, setConcealed] = useState(false)
   const hiddenAt = useRef(0)
   // Latest document, for rapid successive edits and the resume handler.
@@ -40,7 +41,7 @@ export default function App() {
         setDoc(loaded)
         setLocked(loaded.settings.protection.appLock)
         setLoadState('ready')
-        void syncReminder(loaded.settings)
+        void syncReminder(loaded.settings, hu).then(setReminderStatus)
       },
       (error: unknown) => setLoadState(error instanceof StoreCorruptError ? 'corrupt' : 'failed'),
     )
@@ -55,7 +56,7 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
     const resumed = CapApp.addListener('resume', () => {
-      void syncReminder(latest.current.settings)
+      void syncReminder(latest.current.settings, hu).then(setReminderStatus)
       if (needsUnlock(latest.current.settings.protection.appLock, hiddenAt.current, Date.now())) {
         setLocked(true)
       }
@@ -82,7 +83,7 @@ export default function App() {
 
   const replaceDocument = (next: N1Document) => {
     commit(next)
-    void syncReminder(next.settings)
+    void syncReminder(next.settings, hu).then(setReminderStatus)
   }
 
   if (loadState === 'loading') return null
@@ -124,7 +125,9 @@ export default function App() {
   const changeTopics = (topics: Topic[]) => commit(withTopics(latest.current, topics))
   const changeSettings = (settings: Settings, options?: { resyncReminder?: boolean }) => {
     commit(withSettings(latest.current, settings))
-    if (options?.resyncReminder) void syncReminder(settings)
+    if (!options?.resyncReminder) return
+    const allowed = settings.reminderEnabled ? requestReminderPermission() : Promise.resolve(false)
+    void allowed.then(() => syncReminder(settings, hu)).then(setReminderStatus)
   }
 
   return (
@@ -166,6 +169,7 @@ export default function App() {
             onOpenSummary={() => setSummaryOpen(true)}
             settings={doc.settings}
             onSettings={changeSettings}
+            reminderStatus={reminderStatus}
           />
         )}
         <div style={{ height: 120 }} aria-hidden="true" />

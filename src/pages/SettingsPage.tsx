@@ -12,12 +12,14 @@ import { todayIso } from '@/lib/dates'
 import { medHasValues } from '@/lib/document'
 import { shareFile } from '@/lib/files'
 import { medName } from '@/lib/meds'
+import { allowExactReminders, type ReminderStatus } from '@/lib/reminder'
 import { ALL_FIELDS, type Med, type N1Document, type Settings } from '@/types'
 
 type Props = {
   doc: N1Document
   onDocument: (doc: N1Document) => void
   onOpenSummary: () => void
+  reminderStatus: ReminderStatus
   settings: Settings
   onSettings: (settings: Settings, options?: { resyncReminder?: boolean }) => void
 }
@@ -28,6 +30,7 @@ export default function SettingsPage({
   doc,
   onDocument,
   onOpenSummary,
+  reminderStatus,
   settings,
   onSettings,
 }: Props) {
@@ -99,6 +102,25 @@ export default function SettingsPage({
               className="rounded-lg border border-line bg-paper px-3 py-2 tabular-nums"
             />
           </label>
+        )}
+        {settings.reminderEnabled && reminderStatus === 'denied' && (
+          <p className="mt-2 text-sm">{hu.settings.reminderDenied}</p>
+        )}
+        {settings.reminderEnabled && reminderStatus === 'scheduled-inexact' && (
+          <div className="mt-2 text-sm">
+            <p>{hu.settings.reminderInexact}</p>
+            <button
+              type="button"
+              onClick={() =>
+                void allowExactReminders().then(() =>
+                  onSettings(settings, { resyncReminder: true }),
+                )
+              }
+              className="mt-1 font-medium text-sage underline"
+            >
+              {hu.settings.reminderExact}
+            </button>
+          </div>
         )}
       </section>
 

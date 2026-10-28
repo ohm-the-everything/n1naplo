@@ -1,7 +1,9 @@
 import { Capacitor } from '@capacitor/core'
 import { LocalNotifications } from '@capacitor/local-notifications'
-import { hu } from '@/i18n/hu'
+import type { hu } from '@/i18n/hu'
 import type { Settings } from '@/types'
+
+type Messages = typeof hu
 
 // Not the plugin's `on` repeat: it reschedules via a weak setExact(RTC) alarm that Doze
 // defers, so reminders silently stopped (Samsung, 2026-08). Instead, 14 one-shot `at`
@@ -20,8 +22,11 @@ export function nextOccurrences(now: Date, hour: number, minute: number, count: 
   })
 }
 
-export async function syncReminder(settings: Settings): Promise<void> {
-  if (!Capacitor.isNativePlatform()) return
+export type ReminderStatus = 'off' | 'scheduled' | 'scheduled-inexact' | 'denied' | 'web'
+
+// Never prompts: permission is asked only after the user chose the reminder.
+export async function syncReminder(settings: Settings, t: Messages): Promise<ReminderStatus> {
+  if (!Capacitor.isNativePlatform()) return 'web'
 
   const ids = [
     LEGACY_REMINDER_ID,
@@ -30,10 +35,10 @@ export async function syncReminder(settings: Settings): Promise<void> {
   await LocalNotifications.cancel({ notifications: ids.map((id) => ({ id })) })
   // Opening the app is what the reminder asked for; older ones in the tray are noise.
   await LocalNotifications.removeAllDeliveredNotifications()
-  if (!settings.reminderEnabled) return
+  if (!settings.reminderEnabled) return 'off'
 
-  const permission = await LocalNotifications.requestPermissions()
-  if (permission.display !== 'granted') return
+  const permission = await LocalNotifications.checkPermissions()
+  if (permission.display !== 'granted') return 'denied'
 
   const occurrences = nextOccurrences(
     new Date(),
@@ -41,12 +46,24 @@ export async function syncReminder(settings: Settings): Promise<void> {
     settings.reminderMinute,
     REMINDER_WINDOW_DAYS,
   )
-  await LocalNotifications.schedule({
+  const result = await LocalNotifications.schedule({
     notifications: occurrences.map((at, index) => ({
       id: REMINDER_ID_BASE + index,
-      title: hu.reminder.title,
-      body: hu.reminder.body,
+      title: t.reminder.title,
+      body: t.reminder.body,
       schedule: { at, allowWhileIdle: true },
     })),
   })
+  return result.warning ? 'scheduled-inexact' : 'scheduled'
+}
+
+export async function allowExactReminders(): Promise<void> {
+  if (Capacitor.getPlatform() === 'android')
+    await LocalNotifications.changeExactNotificationSetting()
+}
+
+export async function requestReminderPermission(): Promise<boolean> {
+  if (!Capacitor.isNativePlatform()) return false
+  const permission = await LocalNotifications.requestPermissions()
+  return permission.display === 'granted'
 }
