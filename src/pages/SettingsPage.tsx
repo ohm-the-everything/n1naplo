@@ -1,9 +1,12 @@
 import { Plus, Share2 } from 'lucide-react'
+import { useState } from 'react'
 import BackupChoice from '@/components/BackupChoice'
+import PassphraseSheet from '@/components/PassphraseSheet'
 import RestoreFromFile from '@/components/RestoreFromFile'
 import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
 import { backupFileName, serializeBackup } from '@/lib/backup'
+import { encryptBackup } from '@/lib/crypto'
 import { buildCsv } from '@/lib/csv'
 import { todayIso } from '@/lib/dates'
 import { medHasValues } from '@/lib/document'
@@ -21,6 +24,7 @@ type Props = {
 const pad = (n: number) => String(n).padStart(2, '0')
 
 export default function SettingsPage({ doc, onDocument, settings, onSettings }: Props) {
+  const [saving, setSaving] = useState(false)
   const changeMed = (index: number, changes: Partial<Med>) => {
     const meds = settings.meds.map((med, i) => (i === index ? { ...med, ...changes } : med))
     onSettings({ ...settings, meds })
@@ -34,6 +38,12 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
       enabled: true,
     }
     onSettings({ ...settings, meds: [...settings.meds, med] })
+  }
+
+  const backupText = () => serializeBackup(doc, new Date().toISOString())
+  const saveBackup = async (text: string) => {
+    setSaving(false)
+    await shareFile(backupFileName(todayIso()), text, 'application/json')
   }
 
   return (
@@ -160,18 +170,22 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
         <p className="mt-1 text-sm text-muted">{hu.data.hint}</p>
         <button
           type="button"
-          onClick={() =>
-            void shareFile(
-              backupFileName(todayIso()),
-              serializeBackup(doc, new Date().toISOString()),
-              'application/json',
-            )
-          }
+          onClick={() => setSaving(true)}
           className="mt-3 w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
         >
           {hu.data.save}
         </button>
         <RestoreFromFile current={doc} label={hu.data.restore} onApply={onDocument} />
+        {saving && (
+          <PassphraseSheet
+            mode="create"
+            onSubmit={async (passphrase) => {
+              await saveBackup(await encryptBackup(backupText(), passphrase))
+            }}
+            onPlain={() => void saveBackup(backupText())}
+            onCancel={() => setSaving(false)}
+          />
+        )}
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
