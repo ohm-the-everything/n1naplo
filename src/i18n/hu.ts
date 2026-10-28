@@ -118,6 +118,7 @@ export const hu = {
     screenshotsTitle: 'Képernyőkép engedélyezése',
     screenshotsHow:
       'Alapból tiltva: a napló nem kerül képernyőképre vagy képernyőfelvételre, és az appváltóban sem látszik. Android 14-től a képernyőt olvasó alkalmazások sem látják — a TalkBack felolvasó igen.',
+    screenshotsLocked: 'Amíg a zárolás be van kapcsolva, a képernyőkép tiltva marad.',
     screenshotsRisk:
       'Ha engedélyezed, a képernyőkép a galériába kerül, onnan pedig bárhova: felhőbe, megosztásba, egy asszisztenshez. Az orvosnak az összefoglaló a jobb út.',
   },

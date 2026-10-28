@@ -21,4 +21,9 @@ describe('applyScreenProtection', () => {
     await applyScreenProtection({ allowScreenshots: true, appLock: false })
     expect(calls).toEqual(['enable', 'disable'])
   })
+
+  it('keeps screen protection on while the app lock is on', async () => {
+    await applyScreenProtection({ allowScreenshots: true, appLock: true })
+    expect(calls).toEqual(['enable'])
+  })
 })

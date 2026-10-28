@@ -26,6 +26,7 @@ export default function App() {
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
   const [locked, setLocked] = useState(false)
+  const [concealed, setConcealed] = useState(false)
   const hiddenAt = useRef(0)
   // Latest document, for rapid successive edits and the resume handler.
   const latest = useRef(doc)
@@ -56,9 +57,12 @@ export default function App() {
       if (needsUnlock(latest.current.settings.protection.appLock, hiddenAt.current, Date.now())) {
         setLocked(true)
       }
+      setConcealed(false)
     })
+    // Hide the diary as soon as the app leaves the screen, not after the resume re-render.
     const paused = CapApp.addListener('pause', () => {
       hiddenAt.current = Date.now()
+      if (latest.current.settings.protection.appLock) setConcealed(true)
     })
     return () => {
       for (const listener of [resumed, paused]) void listener.then((handle) => handle.remove())
@@ -95,6 +99,7 @@ export default function App() {
     )
   }
   if (locked) return <LockScreen onUnlocked={() => setLocked(false)} />
+  if (concealed) return null
   if (loadState === 'failed') {
     return (
       <div

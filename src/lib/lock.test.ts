@@ -12,6 +12,10 @@ describe('needsUnlock', () => {
     expect(needsUnlock(true, 0, MINUTE)).toBe(true)
   })
 
+  it('locks when the clock went backwards while away', () => {
+    expect(needsUnlock(true, 10 * MINUTE, 5 * MINUTE)).toBe(true)
+  })
+
   it('stays open after a short switch, such as the share sheet', () => {
     expect(needsUnlock(true, 0, MINUTE - 1)).toBe(false)
   })

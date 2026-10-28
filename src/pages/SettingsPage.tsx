@@ -213,6 +213,9 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
         </div>
         <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsHow}</p>
         <p className="mt-1 text-sm">{hu.protection.screenshotsRisk}</p>
+        {settings.protection.appLock && settings.protection.allowScreenshots && (
+          <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsLocked}</p>
+        )}
         <AppLockChoice
           value={settings.protection.appLock}
           onChange={(appLock) =>

@@ -4,6 +4,7 @@ import type { Protection } from '@/types'
 
 export async function applyScreenProtection(protection: Protection): Promise<void> {
   if (!Capacitor.isNativePlatform()) return
-  if (protection.allowScreenshots) await PrivacyScreen.disable()
+  // With the app lock on, the app switcher must not show the diary either.
+  if (protection.allowScreenshots && !protection.appLock) await PrivacyScreen.disable()
   else await PrivacyScreen.enable()
 }
