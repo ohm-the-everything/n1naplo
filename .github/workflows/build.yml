@@ -55,6 +55,12 @@ jobs:
         run: |
           test -f android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
           ! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/
+      - name: No-backup guard
+        # A napló nem kerülhet felhős mentésbe vagy eszközök közti átvitelbe.
+        run: |
+          m=android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+          grep -q 'android:allowBackup="false"' "$m"
+          grep -q 'android:dataExtractionRules="@xml/data_extraction_rules"' "$m"
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
