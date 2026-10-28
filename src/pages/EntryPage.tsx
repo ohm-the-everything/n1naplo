@@ -4,6 +4,7 @@ import Stepper from '@/components/Stepper'
 import TopicsCard from '@/components/TopicsCard'
 import { hu } from '@/i18n/hu'
 import { addDays, formatHu, todayIso } from '@/lib/dates'
+import { medName } from '@/lib/meds'
 import type { DayEntry, Settings, Topic } from '@/types'
 
 type Props = {
@@ -93,19 +94,20 @@ export default function EntryPage({ entries, settings, onChange, topics, onTopic
       )}
 
       <div className="mt-2 rounded-xl border border-line bg-card px-4 py-1">
-        {settings.meds
-          .filter((med) => med.enabled)
-          .map((med) => (
-            <Stepper
-              key={med.id}
-              label={med.label || hu.settings.medLabelPlaceholder}
-              value={entry.meds?.[med.id]}
-              min={0}
-              max={20}
-              step={0.5}
-              onChange={(value) => setMed(med.id, value)}
-            />
-          ))}
+        {settings.meds.map(
+          (med, index) =>
+            med.enabled && (
+              <Stepper
+                key={med.id}
+                label={medName(med, index)}
+                value={entry.meds?.[med.id]}
+                min={0}
+                max={20}
+                step={0.5}
+                onChange={(value) => setMed(med.id, value)}
+              />
+            ),
+        )}
         {fields.alvas && (
           <Stepper
             label={hu.fields.alvas}

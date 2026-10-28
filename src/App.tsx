@@ -1,35 +1,39 @@
 import { App as CapApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import TabBar, { type Tab } from '@/components/TabBar'
+import { hu } from '@/i18n/hu'
+import { emptyDocument, withEntry, withSettings, withTopics } from '@/lib/document'
 import { syncReminder } from '@/lib/reminder'
-import {
-  loadEntries,
-  loadSettings,
-  loadTopics,
-  persistEntries,
-  persistSettings,
-  persistTopics,
-} from '@/lib/storage'
+import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
+import RecoveryPage from '@/pages/RecoveryPage'
 import ReviewPage from '@/pages/ReviewPage'
 import SettingsPage from '@/pages/SettingsPage'
-import { type DayEntry, isEmptyEntry, type Settings, type Topic } from '@/types'
+import type { DayEntry, N1Document, Settings, Topic } from '@/types'
+
+type LoadState = 'loading' | 'ready' | 'corrupt' | 'failed'
+
+// Egyetlen író az egész appban: minden változás ezen át, sorban kerül a fájlba.
+const save = createSaver()
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('entry')
-  const [entries, setEntries] = useState<Record<string, DayEntry> | null>(null)
-  const [settings, setSettings] = useState<Settings | null>(null)
-  const [topics, setTopics] = useState<Topic[] | null>(null)
+  const [loadState, setLoadState] = useState<LoadState>('loading')
+  const [doc, setDoc] = useState<N1Document>(emptyDocument)
+  const [saveFailed, setSaveFailed] = useState(false)
+  // A legutóbbi dokumentum a gyors egymásutáni változásokhoz és a resume-hoz.
+  const latest = useRef(doc)
 
   useEffect(() => {
-    Promise.all([loadEntries(), loadSettings(), loadTopics()]).then(
-      ([loadedEntries, loadedSettings, loadedTopics]) => {
-        setEntries(loadedEntries)
-        setSettings(loadedSettings)
-        setTopics(loadedTopics)
-        void syncReminder(loadedSettings)
+    loadDocument().then(
+      (loaded) => {
+        latest.current = loaded
+        setDoc(loaded)
+        setLoadState('ready')
+        void syncReminder(loaded.settings)
       },
+      (error: unknown) => setLoadState(error instanceof StoreCorruptError ? 'corrupt' : 'failed'),
     )
   }, [])
 
@@ -38,54 +42,90 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
     const listener = CapApp.addListener('resume', () => {
-      void loadSettings().then(syncReminder)
+      void syncReminder(latest.current.settings)
     })
     return () => {
       void listener.then((handle) => handle.remove())
     }
   }, [])
 
-  if (!entries || !settings || !topics) return null
-
-  const changeEntry = (entry: DayEntry) => {
-    const next = { ...entries }
-    if (isEmptyEntry(entry)) {
-      delete next[entry.date]
-    } else {
-      next[entry.date] = entry
-    }
-    setEntries(next)
-    void persistEntries(next)
+  const commit = (next: N1Document) => {
+    latest.current = next
+    setDoc(next)
+    save(next).then(
+      () => setSaveFailed(false),
+      () => setSaveFailed(true),
+    )
   }
 
-  const changeTopics = (next: Topic[]) => {
-    setTopics(next)
-    void persistTopics(next)
+  if (loadState === 'loading') return null
+  if (loadState === 'corrupt') {
+    return (
+      <RecoveryPage
+        onStartEmpty={() => {
+          commit(emptyDocument())
+          setLoadState('ready')
+        }}
+      />
+    )
+  }
+  if (loadState === 'failed') {
+    return (
+      <div
+        className="mx-auto w-full max-w-md px-5"
+        style={{ paddingTop: 'calc(48px + var(--safe-area-top))' }}
+      >
+        <p className="text-[15px]">{hu.store.loadFailed}</p>
+        <button
+          type="button"
+          onClick={() => window.location.reload()}
+          className="mt-4 rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
+        >
+          {hu.store.retry}
+        </button>
+      </div>
+    )
   }
 
-  const changeSettings = (next: Settings, options?: { resyncReminder?: boolean }) => {
-    setSettings(next)
-    void persistSettings(next)
-    if (options?.resyncReminder) void syncReminder(next)
+  const changeEntry = (entry: DayEntry) => commit(withEntry(latest.current, entry))
+  const changeTopics = (topics: Topic[]) => commit(withTopics(latest.current, topics))
+  const changeSettings = (settings: Settings, options?: { resyncReminder?: boolean }) => {
+    commit(withSettings(latest.current, settings))
+    if (options?.resyncReminder) void syncReminder(settings)
   }
 
   return (
     <div style={{ paddingTop: 'var(--safe-area-top)' }}>
+      {saveFailed && (
+        <div
+          role="alert"
+          className="flex items-center justify-between gap-3 bg-sage-soft px-5 py-2 text-sm"
+        >
+          <span>{hu.store.saveFailed}</span>
+          <button
+            type="button"
+            onClick={() => commit(latest.current)}
+            className="font-medium underline"
+          >
+            {hu.store.retry}
+          </button>
+        </div>
+      )}
       <main className="mx-auto w-full max-w-md px-5 pt-4">
         {tab === 'entry' && (
           <EntryPage
-            entries={entries}
-            settings={settings}
+            entries={doc.entries}
+            settings={doc.settings}
             onChange={changeEntry}
-            topics={topics}
+            topics={doc.topics}
             onTopicsChange={changeTopics}
           />
         )}
         {tab === 'review' && (
-          <ReviewPage entries={entries} settings={settings} onSettings={changeSettings} />
+          <ReviewPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
         )}
         {tab === 'settings' && (
-          <SettingsPage entries={entries} settings={settings} onSettings={changeSettings} />
+          <SettingsPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
         )}
         <div style={{ height: 120 }} aria-hidden="true" />
       </main>

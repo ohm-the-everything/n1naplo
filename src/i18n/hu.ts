@@ -52,15 +52,29 @@ export const hu = {
     reminderHint: 'Szólok este. Nyomás nincs.',
     reminderTime: 'Időpont',
     medsSection: 'Gyógyszermezők',
-    med1Default: 'Gyógyszer 1',
-    med2Default: 'Gyógyszer 2',
-    medLabelPlaceholder: 'Mező neve',
+    medFallback: 'Gyógyszer',
     addMed: 'Új gyógyszermező',
     medsHint:
       'A címkék a te leleted szerint — nincs beégetett gyógyszernév. A kikapcsolt mező adata megmarad, és az exportban is benne lesz.',
     fieldsSection: 'Mezők',
     privacy:
       'Minden adat kizárólag ezen a készüléken marad. Az app nem kér internet-hozzáférést — nincs analitika, nincs fiók, nincs felhő.',
+  },
+  common: {
+    cancel: 'Mégse',
+  },
+  store: {
+    saveFailed: 'Az utolsó változást nem sikerült elmenteni.',
+    retry: 'Újra',
+    loadFailed: 'A naplót most nem sikerült megnyitni. Az adat nem veszett el.',
+  },
+  recovery: {
+    title: 'A napló fájlja megsérült.',
+    body: 'Nem írtam felül semmit: a sérült fájlról másolat készült, és az megmarad. Kezdhetsz most üres naplóval.',
+    startEmpty: 'Kezdés üres naplóval',
+    confirmTitle: 'Üres naplóval kezded?',
+    confirmBody: 'A sérült fájl másolata megmarad a telefonon. A napló üresen indul.',
+    confirmLabel: 'Igen, üresen kezdem',
   },
   reminder: {
     title: 'N1 Napló',

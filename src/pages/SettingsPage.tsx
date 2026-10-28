@@ -2,6 +2,7 @@ import { Plus, Share2 } from 'lucide-react'
 import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
 import { exportCsv } from '@/lib/export'
+import { medName } from '@/lib/meds'
 import { ALL_FIELDS, type DayEntry, type Med, type Settings } from '@/types'
 
 type Props = {
@@ -85,13 +86,13 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
             <input
               value={med.label}
               onChange={(event) => changeMed(index, { label: event.target.value })}
-              placeholder={hu.settings.medLabelPlaceholder}
+              placeholder={medName({ ...med, label: '' }, index)}
               className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
             />
             <Toggle
               checked={med.enabled}
               onChange={(on) => changeMed(index, { enabled: on })}
-              label={med.label || hu.settings.medLabelPlaceholder}
+              label={medName(med, index)}
             />
           </div>
         ))}

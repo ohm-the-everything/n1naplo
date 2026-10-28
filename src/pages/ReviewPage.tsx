@@ -3,6 +3,7 @@ import Scatter from '@/components/Scatter'
 import Sparkline from '@/components/Sparkline'
 import { hu } from '@/i18n/hu'
 import { addDays, daysBetween, todayIso } from '@/lib/dates'
+import { medName } from '@/lib/meds'
 import type { DayEntry, NumericField, Settings } from '@/types'
 
 type Props = {
@@ -87,10 +88,11 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
     if (!settings.enabledFields[key]) return
     pushCard(key, label, series(key), min, fallbackMax)
   }
-  for (const med of settings.meds.filter((m) => m.enabled)) {
+  for (const [index, med] of settings.meds.entries()) {
+    if (!med.enabled) continue
     pushCard(
       `med-${med.id}`,
-      med.label || hu.settings.medLabelPlaceholder,
+      medName(med, index),
       dates.map((date) => entries[date]?.meds?.[med.id]),
       0,
       1,
