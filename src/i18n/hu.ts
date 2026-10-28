@@ -185,6 +185,27 @@ export const hu = {
     reminderYes: 'Kérek esti jelzést (21:00)',
     reminderNo: 'Most nem',
   },
+  help: {
+    title: 'Segítség',
+    nobody: 'A naplót senki nem figyeli — ha bajban vagy, hívj valakit.',
+    emergency: 'Általános segélyhívó',
+    support:
+      'Lelki elsősegély — Magyar Lelki Elsősegély Telefonszolgálatok Szövetsége (LESZ). Ingyenes, éjjel-nappal.',
+    checked: 'Ellenőrizve: 2026-10-28',
+    notMedical:
+      'Az N1 Napló nem orvostechnikai eszköz: nem diagnosztizál, nem kezel, nem ad tanácsot az adagról. Kérdéseiddel fordulj az orvosodhoz.',
+  },
+  about: {
+    section: 'Névjegy',
+    version: 'Verzió: {version}',
+    license: 'Nyílt forráskód, MIT-licenc.',
+    source: 'Forráskód',
+    site: 'Weboldal',
+    privacyLink: 'Adatvédelmi tájékoztató',
+    publisher: 'Kiadó: OHM Corp Kft.',
+    privacy:
+      'Az app nem kér internet-hozzáférést, nem gyűjt és nem küld adatot. A napló a telefonodon van: csak akkor hagyja el, ha te mented ki, vagy ha másolatot kérsz a rendszer mentésébe.',
+  },
   common: {
     cancel: 'Mégse',
   },

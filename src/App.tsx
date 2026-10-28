@@ -9,6 +9,7 @@ import { applyScreenProtection } from '@/lib/protection'
 import { type ReminderStatus, requestReminderPermission, syncReminder } from '@/lib/reminder'
 import { createSaver, loadDocument, StoreCorruptError } from '@/lib/store'
 import EntryPage from '@/pages/EntryPage'
+import HelpPage from '@/pages/HelpPage'
 import LockScreen from '@/pages/LockScreen'
 import OnboardingPage from '@/pages/OnboardingPage'
 import RecoveryPage from '@/pages/RecoveryPage'
@@ -24,7 +25,7 @@ const save = createSaver()
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('entry')
-  const [summaryOpen, setSummaryOpen] = useState(false)
+  const [overlay, setOverlay] = useState<'summary' | 'help' | null>(null)
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
@@ -158,25 +159,28 @@ export default function App() {
         </div>
       )}
       <main className="mx-auto w-full max-w-md px-5 pt-4">
-        {summaryOpen && <SummaryPage doc={doc} onBack={() => setSummaryOpen(false)} />}
-        {!summaryOpen && tab === 'entry' && (
+        {overlay === 'summary' && <SummaryPage doc={doc} onBack={() => setOverlay(null)} />}
+        {overlay === 'help' && <HelpPage onBack={() => setOverlay(null)} />}
+        {overlay === null && tab === 'entry' && (
           <EntryPage
             entries={doc.entries}
             settings={doc.settings}
             onChange={changeEntry}
             topics={doc.topics}
             onTopicsChange={changeTopics}
-            onOpenSummary={() => setSummaryOpen(true)}
+            onOpenSummary={() => setOverlay('summary')}
+            onOpenHelp={() => setOverlay('help')}
           />
         )}
-        {!summaryOpen && tab === 'review' && (
+        {overlay === null && tab === 'review' && (
           <ReviewPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
         )}
-        {!summaryOpen && tab === 'settings' && (
+        {overlay === null && tab === 'settings' && (
           <SettingsPage
             doc={doc}
             onDocument={replaceDocument}
-            onOpenSummary={() => setSummaryOpen(true)}
+            onOpenSummary={() => setOverlay('summary')}
+            onOpenHelp={() => setOverlay('help')}
             settings={doc.settings}
             onSettings={changeSettings}
             reminderStatus={reminderStatus}
@@ -187,7 +191,7 @@ export default function App() {
       <TabBar
         tab={tab}
         onSelect={(next) => {
-          setSummaryOpen(false)
+          setOverlay(null)
           setTab(next)
         }}
       />

@@ -1,5 +1,6 @@
 import { FileText, Plus } from 'lucide-react'
 import { useState } from 'react'
+import About from '@/components/About'
 import AppLockChoice from '@/components/AppLockChoice'
 import BackupChoice from '@/components/BackupChoice'
 import PassphraseSheet from '@/components/PassphraseSheet'
@@ -19,6 +20,7 @@ type Props = {
   doc: N1Document
   onDocument: (doc: N1Document) => void
   onOpenSummary: () => void
+  onOpenHelp: () => void
   reminderStatus: ReminderStatus
   settings: Settings
   onSettings: (settings: Settings, options?: { resyncReminder?: boolean }) => void
@@ -30,6 +32,7 @@ export default function SettingsPage({
   doc,
   onDocument,
   onOpenSummary,
+  onOpenHelp,
   reminderStatus,
   settings,
   onSettings,
@@ -248,6 +251,15 @@ export default function SettingsPage({
           }
         />
       </section>
+
+      <button
+        type="button"
+        onClick={onOpenHelp}
+        className="rounded-xl border border-line bg-card p-4 text-left text-[15px] font-medium"
+      >
+        {hu.help.title}
+      </button>
+      <About />
 
       <p className="px-2 text-center text-xs text-muted">{hu.settings.privacy}</p>
     </div>

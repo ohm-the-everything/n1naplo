@@ -14,6 +14,7 @@ type Props = {
   topics: Topic[]
   onTopicsChange: (topics: Topic[]) => void
   onOpenSummary: () => void
+  onOpenHelp: () => void
 }
 
 export default function EntryPage({
@@ -23,6 +24,7 @@ export default function EntryPage({
   topics,
   onTopicsChange,
   onOpenSummary,
+  onOpenHelp,
 }: Props) {
   const [date, setDate] = useState(todayIso())
   const dateInputRef = useRef<HTMLInputElement>(null)
@@ -193,6 +195,13 @@ export default function EntryPage({
       <TopicsCard topics={topics} onChange={onTopicsChange} onOpenSummary={onOpenSummary} />
 
       <p className="mt-3 text-center text-xs text-muted">{hu.entry.footer}</p>
+      <button
+        type="button"
+        onClick={onOpenHelp}
+        className="mt-2 self-center text-sm font-medium text-sage underline"
+      >
+        {hu.help.title}
+      </button>
     </div>
   )
 }
