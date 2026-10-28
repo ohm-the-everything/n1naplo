@@ -1,4 +1,8 @@
-export type Med = { id: string; label: string; enabled: boolean }
+export type Locale = 'hu' | 'en'
+
+// A címke és az egység üres is lehet: a felület ilyenkor a nyelvi helyőrzőt mutatja
+// („Gyógyszer 1"). Az egység zárolt, amint a mezőben van adat (medHasValues).
+export type Med = { id: string; label: string; unit: string; enabled: boolean }
 
 // Két rendelés közt gyűlő kérdések/témák a következő orvosi vizitre.
 export type Topic = { id: string; text: string; done: boolean }
@@ -36,6 +40,18 @@ export type Settings = {
   reminderMinute: number
   enabledFields: Record<FieldKey, boolean>
   lastReviewOpen: string | null
+  onboardedAt: string | null // ISO időpont; null = a bevezetés még hátravan
+  locale: 'auto' | Locale
+}
+
+export const DOCUMENT_VERSION = 2
+
+// A teljes napló — ez megy fájlba, mentésbe, és ez jön vissza mindenhonnan.
+export type N1Document = {
+  version: typeof DOCUMENT_VERSION
+  entries: Record<string, DayEntry>
+  settings: Settings
+  topics: Topic[]
 }
 
 // A teljesen üres sor adatlyuk, nem tárolt nulla.

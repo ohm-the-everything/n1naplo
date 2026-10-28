@@ -3,8 +3,8 @@ import type { DayEntry, Med } from '@/types'
 import { buildCsv, escapeField } from './csv'
 
 const meds: Med[] = [
-  { id: 'med1', label: 'XR', enabled: true },
-  { id: 'med2', label: 'IR', enabled: true },
+  { id: 'med1', label: 'XR', unit: '', enabled: true },
+  { id: 'med2', label: 'IR', unit: '', enabled: true },
 ]
 
 describe('buildCsv', () => {
@@ -27,7 +27,7 @@ describe('buildCsv', () => {
   })
 
   it('hozzáadott harmadik gyógyszermezővel is működik', () => {
-    const three: Med[] = [...meds, { id: 'm3', label: 'Magnézium', enabled: true }]
+    const three: Med[] = [...meds, { id: 'm3', label: 'Magnézium', unit: '', enabled: true }]
     const entry: DayEntry = { date: '2026-08-18', meds: { m3: 1 } }
     const rows = buildCsv([entry], three).split('\n')
     expect(rows[0]).toBe(
@@ -37,7 +37,7 @@ describe('buildCsv', () => {
   })
 
   it('a kikapcsolt gyógyszermező is exportálódik — a történeti adat nem vész el', () => {
-    const withDisabled: Med[] = [meds[0], { id: 'med2', label: 'IR', enabled: false }]
+    const withDisabled: Med[] = [meds[0], { id: 'med2', label: 'IR', unit: '', enabled: false }]
     const entry: DayEntry = { date: '2026-08-17', meds: { med2: 1 } }
     expect(buildCsv([entry], withDisabled).split('\n')[1]).toBe('2026-08-17,,1,,,,,,,')
   })
@@ -56,7 +56,10 @@ describe('buildCsv', () => {
   })
 
   it('a szerkeszthető címkét is escape-eli', () => {
-    const commaLabel: Med[] = [{ id: 'med1', label: 'XR, reggel', enabled: true }, meds[1]]
+    const commaLabel: Med[] = [
+      { id: 'med1', label: 'XR, reggel', unit: '', enabled: true },
+      meds[1],
+    ]
     expect(buildCsv([], commaLabel).startsWith('datum,"XR, reggel",IR')).toBe(true)
   })
 })

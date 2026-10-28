@@ -19,7 +19,12 @@ export default function SettingsPage({ entries, settings, onSettings }: Props) {
   }
 
   const addMed = () => {
-    const med: Med = { id: `med-${crypto.randomUUID().slice(0, 8)}`, label: '', enabled: true }
+    const med: Med = {
+      id: `med-${crypto.randomUUID().slice(0, 8)}`,
+      label: '',
+      unit: '',
+      enabled: true,
+    }
     onSettings({ ...settings, meds: [...settings.meds, med] })
   }
 

@@ -28,8 +28,8 @@ describe('migrateSettings', () => {
       enabledFields: { med1: true, med2: false, izgalom: true },
     })
     expect(migrated.meds).toEqual([
-      { id: 'med1', label: 'XR', enabled: true },
-      { id: 'med2', label: 'IR', enabled: false },
+      { id: 'med1', label: 'XR', unit: '', enabled: true },
+      { id: 'med2', label: 'IR', unit: '', enabled: false },
     ])
   })
 
@@ -46,7 +46,7 @@ describe('migrateSettings', () => {
   })
 
   it('a már meds-listás beállítást változatlanul hagyja', () => {
-    const meds = [{ id: 'abc', label: 'Retard', enabled: true }]
+    const meds = [{ id: 'abc', label: 'Retard', unit: '', enabled: true }]
     expect(migrateSettings({ meds }).meds).toEqual(meds)
   })
 })

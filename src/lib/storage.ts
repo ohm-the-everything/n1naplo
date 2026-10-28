@@ -16,8 +16,8 @@ const TOPICS_KEY = 'topics'
 export function defaultSettings(): Settings {
   return {
     meds: [
-      { id: 'med1', label: hu.settings.med1Default, enabled: true },
-      { id: 'med2', label: hu.settings.med2Default, enabled: true },
+      { id: 'med1', label: hu.settings.med1Default, unit: '', enabled: true },
+      { id: 'med2', label: hu.settings.med2Default, unit: '', enabled: true },
     ],
     reminderEnabled: true,
     reminderHour: 21,
@@ -27,6 +27,8 @@ export function defaultSettings(): Settings {
       boolean
     >,
     lastReviewOpen: null,
+    onboardedAt: null,
+    locale: 'auto',
   }
 }
 
@@ -61,7 +63,7 @@ export function migrateSettings(raw: unknown): Settings {
 
   // v0.1: med1Label/med2Label + enabledFields.med1/med2 → meds lista.
   const meds: Med[] =
-    storedMeds ??
+    storedMeds?.map((med) => ({ ...med, unit: med.unit ?? '' })) ??
     base.meds.map((med, index) => ({
       ...med,
       label: (index === 0 ? med1Label : med2Label) ?? med.label,
