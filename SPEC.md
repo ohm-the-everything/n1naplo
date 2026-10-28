@@ -70,6 +70,15 @@ kapcsolhatók a beállításokban.
    egyáltalán nem kér INTERNET permissiont.** Nincs analytics, nincs fiók, nincs felhő. Ez a
    sorstárs-bizalom alapja és a README első mondata.
 
+10. **Védelem a telefonon** — nyílt, ellenőrizhető eszközökkel, nem titkos megoldással:
+    képernyőkép és képernyőfelvétel alapból tiltva (a felhasználó engedélyezheti, a kockázat
+    leírásával); Android 14-től a képernyőt olvasó alkalmazások sem látják a naplót (a
+    TalkBack igen); választható zárolás a telefon saját azonosításával (arc, ujjlenyomat,
+    kód — be- és kikapcsolni is csak azonosítás után lehet); a mentésfájl jelmondattal
+    titkosítható (PBKDF2 + AES-GCM; elfelejtett jelmondat esetén senki nem nyitja meg);
+    iOS-en a naplófájl zárolt telefonon olvashatatlan. Az orvosnak szóló CSV és PDF nem
+    titkosított — ez a dolga.
+
 **Kivéve 1.0-ból:** az „izgalom × adag" keresztkép (összeadott adagokat mutatott, ami
 félrevezet).
 
