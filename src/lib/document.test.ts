@@ -39,6 +39,7 @@ function sampleDocument(): N1Document {
       onboardedAt: '2026-10-01T19:00:00.000Z',
       locale: 'hu',
       backup: { cloud: true, transfer: false },
+      protection: { allowScreenshots: true, appLock: true },
     },
     topics: [{ id: 't1', text: 'Délutáni mélypont', done: false }],
   }
@@ -114,6 +115,31 @@ describe('backup choices', () => {
     const doc = sampleDocument()
     const raw = { ...doc, settings: { ...doc.settings, backup: { cloud: 'yes', transfer: false } } }
     expect(parseDocument(raw)).toEqual({ ok: false, error: 'invalid' })
+  })
+})
+
+describe('protection settings', () => {
+  it('start with screenshots blocked and no app lock', () => {
+    expect(emptyDocument().settings.protection).toEqual({ allowScreenshots: false, appLock: false })
+  })
+
+  it('read as the safe defaults when an older document does not have them', () => {
+    const doc = sampleDocument() as unknown as { settings: Record<string, unknown> }
+    const { protection: _dropped, ...settings } = doc.settings
+    const parsed = parseDocument({ ...doc, settings })
+    expect(parsed.ok && parsed.value.settings.protection).toEqual({
+      allowScreenshots: false,
+      appLock: false,
+    })
+  })
+
+  it('reject a value that is not true or false', () => {
+    const doc = sampleDocument()
+    const protection = { allowScreenshots: 1, appLock: false }
+    expect(parseDocument({ ...doc, settings: { ...doc.settings, protection } })).toEqual({
+      ok: false,
+      error: 'invalid',
+    })
   })
 })
 

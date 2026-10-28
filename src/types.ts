@@ -41,10 +41,13 @@ export type Settings = {
   onboardedAt: string | null // null until onboarding is done
   locale: 'auto' | Locale
   backup: BackupChoice
+  protection: Protection
 }
 
 // Opt-in copies for system backup and phone-to-phone transfer; both off by default.
 export type BackupChoice = { cloud: boolean; transfer: boolean }
+
+export type Protection = { allowScreenshots: boolean; appLock: boolean }
 
 export const DOCUMENT_VERSION = 2
 

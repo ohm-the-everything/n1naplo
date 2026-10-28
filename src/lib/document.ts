@@ -1,7 +1,6 @@
 import { parseIso, toIso } from '@/lib/dates'
 import {
   ALL_FIELDS,
-  type BackupChoice,
   type DayEntry,
   DOCUMENT_VERSION,
   type FieldKey,
@@ -51,6 +50,7 @@ export function emptyDocument(): N1Document {
       onboardedAt: null,
       locale: 'auto',
       backup: { cloud: false, transfer: false },
+      protection: { allowScreenshots: false, appLock: false },
     },
     topics: [],
   }
@@ -161,10 +161,11 @@ function parseSettings(raw: unknown): Settings | null {
   const enabledFields = parseEnabledFields(raw.enabledFields)
   const reminder = parseReminder(raw)
   const marks = parseMarks(raw)
-  const backup = parseBackup(raw.backup)
+  const backup = parseFlags(raw.backup, { cloud: false, transfer: false })
+  const protection = parseFlags(raw.protection, { allowScreenshots: false, appLock: false })
   if (!meds || new Set(meds.map((med) => med.id)).size !== meds.length) return null
-  if (!enabledFields || !reminder || !marks || !backup) return null
-  return { meds, enabledFields, ...reminder, ...marks, backup }
+  if (!enabledFields || !reminder || !marks || !backup || !protection) return null
+  return { meds, enabledFields, ...reminder, ...marks, backup, protection }
 }
 
 function parseMed(raw: unknown): Med | null {
@@ -210,10 +211,14 @@ function parseMarks(raw: Raw) {
   return localeSetting ? { lastReviewOpen, onboardedAt, locale: localeSetting } : null
 }
 
-// Older documents predate the choice: off.
-function parseBackup(raw: unknown): BackupChoice | null {
-  if (raw === undefined) return { cloud: false, transfer: false }
+// Settings added after a document was written read as their defaults.
+function parseFlags<T extends Record<string, boolean>>(raw: unknown, defaults: T): T | null {
+  if (raw === undefined) return defaults
   if (!isRecord(raw)) return null
-  const { cloud, transfer } = raw
-  return isBoolean(cloud) && isBoolean(transfer) ? { cloud, transfer } : null
+  const flags = { ...defaults }
+  for (const key of Object.keys(defaults) as (keyof T & string)[]) {
+    if (!isBoolean(raw[key])) return null
+    flags[key] = raw[key] as T[typeof key]
+  }
+  return flags
 }
