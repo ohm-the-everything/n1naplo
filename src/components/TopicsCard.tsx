@@ -6,9 +6,10 @@ import type { Topic } from '@/types'
 type Props = {
   topics: Topic[]
   onChange: (topics: Topic[]) => void
+  onOpenSummary: () => void
 }
 
-export default function TopicsCard({ topics, onChange }: Props) {
+export default function TopicsCard({ topics, onChange, onOpenSummary }: Props) {
   const [draft, setDraft] = useState('')
 
   const add = () => {
@@ -81,6 +82,9 @@ export default function TopicsCard({ topics, onChange }: Props) {
           <Plus size={20} />
         </button>
       </div>
+      <button type="button" onClick={onOpenSummary} className="mt-3 text-sm font-medium text-sage">
+        {hu.topics.toSummary}
+      </button>
     </div>
   )
 }

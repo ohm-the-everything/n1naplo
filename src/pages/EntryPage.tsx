@@ -13,9 +13,17 @@ type Props = {
   onChange: (entry: DayEntry) => void
   topics: Topic[]
   onTopicsChange: (topics: Topic[]) => void
+  onOpenSummary: () => void
 }
 
-export default function EntryPage({ entries, settings, onChange, topics, onTopicsChange }: Props) {
+export default function EntryPage({
+  entries,
+  settings,
+  onChange,
+  topics,
+  onTopicsChange,
+  onOpenSummary,
+}: Props) {
   const [date, setDate] = useState(todayIso())
   const dateInputRef = useRef<HTMLInputElement>(null)
   const today = todayIso()
@@ -182,7 +190,7 @@ export default function EntryPage({ entries, settings, onChange, topics, onTopic
         />
       )}
 
-      <TopicsCard topics={topics} onChange={onTopicsChange} />
+      <TopicsCard topics={topics} onChange={onTopicsChange} onOpenSummary={onOpenSummary} />
 
       <p className="mt-3 text-center text-xs text-muted">{hu.entry.footer}</p>
     </div>

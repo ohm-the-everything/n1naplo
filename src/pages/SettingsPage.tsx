@@ -1,4 +1,4 @@
-import { Plus, Share2 } from 'lucide-react'
+import { FileText, Plus } from 'lucide-react'
 import { useState } from 'react'
 import AppLockChoice from '@/components/AppLockChoice'
 import BackupChoice from '@/components/BackupChoice'
@@ -8,7 +8,6 @@ import Toggle from '@/components/Toggle'
 import { hu } from '@/i18n/hu'
 import { backupFileName, serializeBackup } from '@/lib/backup'
 import { encryptBackup } from '@/lib/crypto'
-import { buildCsv } from '@/lib/csv'
 import { todayIso } from '@/lib/dates'
 import { medHasValues } from '@/lib/document'
 import { shareFile } from '@/lib/files'
@@ -18,13 +17,20 @@ import { ALL_FIELDS, type Med, type N1Document, type Settings } from '@/types'
 type Props = {
   doc: N1Document
   onDocument: (doc: N1Document) => void
+  onOpenSummary: () => void
   settings: Settings
   onSettings: (settings: Settings, options?: { resyncReminder?: boolean }) => void
 }
 
 const pad = (n: number) => String(n).padStart(2, '0')
 
-export default function SettingsPage({ doc, onDocument, settings, onSettings }: Props) {
+export default function SettingsPage({
+  doc,
+  onDocument,
+  onOpenSummary,
+  settings,
+  onSettings,
+}: Props) {
   const [saving, setSaving] = useState(false)
   const changeMed = (index: number, changes: Partial<Med>) => {
     const meds = settings.meds.map((med, i) => (i === index ? { ...med, ...changes } : med))
@@ -50,18 +56,15 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
   return (
     <div className="flex flex-col gap-3">
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.settings.exportSection}</h2>
         <button
           type="button"
-          onClick={() =>
-            void shareFile(`n1naplo-${todayIso()}.csv`, buildCsv(doc, medName), 'text/csv')
-          }
-          className="mt-3 flex w-full items-center justify-center gap-2 rounded-full bg-sage py-3 font-medium text-white"
+          onClick={onOpenSummary}
+          className="flex w-full items-center justify-center gap-2 rounded-full bg-sage py-3 font-medium text-white"
         >
-          <Share2 size={18} />
-          {hu.settings.exportButton}
+          <FileText size={18} />
+          {hu.summary.title}
         </button>
-        <p className="mt-2 text-xs text-muted">{hu.settings.exportHint}</p>
+        <p className="mt-2 text-xs text-muted">{hu.settings.summaryHint}</p>
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">

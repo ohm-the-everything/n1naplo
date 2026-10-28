@@ -13,6 +13,7 @@ import LockScreen from '@/pages/LockScreen'
 import RecoveryPage from '@/pages/RecoveryPage'
 import ReviewPage from '@/pages/ReviewPage'
 import SettingsPage from '@/pages/SettingsPage'
+import SummaryPage from '@/pages/SummaryPage'
 import type { DayEntry, N1Document, Settings, Topic } from '@/types'
 
 type LoadState = 'loading' | 'ready' | 'corrupt' | 'failed'
@@ -22,6 +23,7 @@ const save = createSaver()
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('entry')
+  const [summaryOpen, setSummaryOpen] = useState(false)
   const [loadState, setLoadState] = useState<LoadState>('loading')
   const [doc, setDoc] = useState<N1Document>(emptyDocument)
   const [saveFailed, setSaveFailed] = useState(false)
@@ -143,29 +145,38 @@ export default function App() {
         </div>
       )}
       <main className="mx-auto w-full max-w-md px-5 pt-4">
-        {tab === 'entry' && (
+        {summaryOpen && <SummaryPage doc={doc} onBack={() => setSummaryOpen(false)} />}
+        {!summaryOpen && tab === 'entry' && (
           <EntryPage
             entries={doc.entries}
             settings={doc.settings}
             onChange={changeEntry}
             topics={doc.topics}
             onTopicsChange={changeTopics}
+            onOpenSummary={() => setSummaryOpen(true)}
           />
         )}
-        {tab === 'review' && (
+        {!summaryOpen && tab === 'review' && (
           <ReviewPage entries={doc.entries} settings={doc.settings} onSettings={changeSettings} />
         )}
-        {tab === 'settings' && (
+        {!summaryOpen && tab === 'settings' && (
           <SettingsPage
             doc={doc}
             onDocument={replaceDocument}
+            onOpenSummary={() => setSummaryOpen(true)}
             settings={doc.settings}
             onSettings={changeSettings}
           />
         )}
         <div style={{ height: 120 }} aria-hidden="true" />
       </main>
-      <TabBar tab={tab} onSelect={setTab} />
+      <TabBar
+        tab={tab}
+        onSelect={(next) => {
+          setSummaryOpen(false)
+          setTab(next)
+        }}
+      />
     </div>
   )
 }
