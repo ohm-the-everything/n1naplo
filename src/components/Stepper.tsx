@@ -3,6 +3,7 @@ import { hu } from '@/i18n/hu'
 
 type Props = {
   label: string
+  hint?: string
   value: number | undefined
   min: number
   max: number
@@ -12,7 +13,7 @@ type Props = {
 
 const round = (value: number) => Math.round(value * 10) / 10
 
-export default function Stepper({ label, value, min, max, step, onChange }: Props) {
+export default function Stepper({ label, hint, value, min, max, step, onChange }: Props) {
   const decrease = () => {
     if (value !== undefined && value > min) onChange(round(Math.max(min, value - step)))
   }
@@ -22,7 +23,10 @@ export default function Stepper({ label, value, min, max, step, onChange }: Prop
 
   return (
     <div className="flex items-center gap-2 border-b border-line py-2 last:border-b-0">
-      <div className="flex-1 text-[15px]">{label}</div>
+      <div className="flex-1">
+        <div className="text-[15px]">{label}</div>
+        {hint && <div className="text-xs text-muted">{hint}</div>}
+      </div>
       {value !== undefined && (
         <button
           type="button"

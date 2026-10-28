@@ -3,7 +3,7 @@ import Scatter from '@/components/Scatter'
 import Sparkline from '@/components/Sparkline'
 import { hu } from '@/i18n/hu'
 import { addDays, daysBetween, todayIso } from '@/lib/dates'
-import { medName } from '@/lib/meds'
+import { labelWithUnit, medName } from '@/lib/meds'
 import type { DayEntry, NumericField, Settings } from '@/types'
 
 type Props = {
@@ -91,7 +91,7 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
     if (!med.enabled) continue
     pushCard(
       `med-${med.id}`,
-      medName(med, index),
+      labelWithUnit(medName(med, index), med.unit),
       dates.map((date) => entries[date]?.meds?.[med.id]),
       0,
       1,
@@ -104,13 +104,6 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   addCard('hangulat', hu.fields.hangulat, 1, 5)
   addCard('sovargas', hu.fields.sovargas, 0, 5)
 
-  const dosePoints = dates.flatMap((date) => {
-    const entry = entries[date]
-    if (!entry || entry.izgalom === undefined) return []
-    const doses = Object.values(entry.meds ?? {})
-    if (doses.length === 0) return []
-    return [{ x: doses.reduce((sum, dose) => sum + dose, 0), y: entry.izgalom }]
-  })
   const boredomPoints = dates.flatMap((date) => {
     const entry = entries[date]
     if (!entry || entry.unalom === undefined || entry.sovargas === undefined) return []
@@ -144,39 +137,25 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
         </div>
       ))}
 
-      <div className="rounded-xl border border-line bg-card p-3">
-        <p className="mb-1 text-sm font-medium">{hu.review.crossDose}</p>
-        {dosePoints.length >= 3 ? (
-          <Scatter
-            points={dosePoints}
-            xMin={0}
-            xMax={Math.max(1, ...dosePoints.map((p) => p.x))}
-            yMin={1}
-            yMax={5}
-            xLabel={hu.review.doseAxis}
-            yLabel={hu.fields.izgalom}
-          />
-        ) : (
-          <p className="text-xs text-muted">{hu.review.noPoints}</p>
-        )}
-      </div>
-
-      <div className="rounded-xl border border-line bg-card p-3">
-        <p className="mb-1 text-sm font-medium">{hu.review.crossBoredom}</p>
-        {boredomPoints.length >= 3 ? (
-          <Scatter
-            points={boredomPoints}
-            xMin={1}
-            xMax={5}
-            yMin={0}
-            yMax={5}
-            xLabel={hu.fields.unalom}
-            yLabel={hu.fields.sovargas}
-          />
-        ) : (
-          <p className="text-xs text-muted">{hu.review.noPoints}</p>
-        )}
-      </div>
+      {settings.enabledFields.unalom && settings.enabledFields.sovargas && (
+        <div className="rounded-xl border border-line bg-card p-3">
+          <p className="text-sm font-medium">{hu.review.crossBoredom}</p>
+          <p className="mb-1 text-xs text-muted">{hu.review.crossCaption}</p>
+          {boredomPoints.length >= 3 ? (
+            <Scatter
+              points={boredomPoints}
+              xMin={1}
+              xMax={5}
+              yMin={0}
+              yMax={5}
+              xLabel={hu.fields.unalom}
+              yLabel={hu.fields.sovargas}
+            />
+          ) : (
+            <p className="text-xs text-muted">{hu.review.noPoints}</p>
+          )}
+        </div>
+      )}
     </div>
   )
 }

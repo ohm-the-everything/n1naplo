@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { medName } from './meds'
+import { labelWithUnit, medName } from './meds'
 
 describe('medName', () => {
   it('uses the label the user gave', () => {
@@ -8,5 +8,12 @@ describe('medName', () => {
 
   it('numbers an unlabelled field by its place in the list', () => {
     expect(medName({ id: 'b', label: '  ', unit: '', enabled: true }, 1)).toBe('Gyógyszer 2')
+  })
+})
+
+describe('labelWithUnit', () => {
+  it('adds the unit in parentheses, and nothing when there is none', () => {
+    expect(labelWithUnit('XR', ' 10 mg ')).toBe('XR (10 mg)')
+    expect(labelWithUnit('XR', '')).toBe('XR')
   })
 })

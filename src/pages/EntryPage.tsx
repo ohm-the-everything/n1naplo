@@ -100,6 +100,7 @@ export default function EntryPage({ entries, settings, onChange, topics, onTopic
               <Stepper
                 key={med.id}
                 label={medName(med, index)}
+                hint={med.unit.trim() || undefined}
                 value={entry.meds?.[med.id]}
                 min={0}
                 max={20}
@@ -161,6 +162,7 @@ export default function EntryPage({ entries, settings, onChange, topics, onTopic
         {fields.sovargas && (
           <Stepper
             label={hu.fields.sovargas}
+            hint={hu.fields.sovargasHint}
             value={entry.sovargas}
             min={0}
             max={5}

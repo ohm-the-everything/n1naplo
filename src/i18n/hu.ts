@@ -30,6 +30,7 @@ export const hu = {
     hangulat: 'Hangulat',
     sovargas: 'Sóvárgás',
     jegyzet: 'Jegyzet',
+    sovargasHint: 'Erős késztetés valami után — te döntöd el, mi.',
   },
   review: {
     empty: 'Még nincs adat. Ez nem hiba, hanem kezdet.',
@@ -39,9 +40,8 @@ export const hu = {
     gateOpen: 'Mutasd most',
     days7: '7 nap',
     days30: '30 nap',
-    crossDose: 'Izgalom × adag',
-    crossBoredom: 'Unalom × sóvárgás',
-    doseAxis: 'adag (db)',
+    crossBoredom: 'Unalom és sóvárgás együtt',
+    crossCaption: 'Csak megfigyelés, nem ok-okozat.',
     noPoints: 'Ehhez még kevés a pont. Majd lesz.',
   },
   settings: {
@@ -53,6 +53,8 @@ export const hu = {
     reminderTime: 'Időpont',
     medsSection: 'Gyógyszermezők',
     medFallback: 'Gyógyszer',
+    unitPlaceholder: 'pl. 10 mg tabletta',
+    unitLocked: 'Más egységhez adj hozzá új mezőt — így a régi adatok jelentése nem változik.',
     addMed: 'Új gyógyszermező',
     medsHint:
       'A címkék a te leleted szerint — nincs beégetett gyógyszernév. A kikapcsolt mező adata megmarad, és az exportban is benne lesz.',

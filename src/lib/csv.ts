@@ -1,3 +1,4 @@
+import { labelWithUnit } from '@/lib/meds'
 import type { Med, N1Document, NumericField } from '@/types'
 
 export type MedName = (med: Med, index: number) => string
@@ -14,8 +15,7 @@ export const NOTE_COLUMN = 'jegyzet'
 export const DATE_COLUMN = 'datum'
 
 export function medColumn(med: Med, index: number, medName: MedName): string {
-  const name = medName(med, index)
-  return med.unit.trim() ? `${name} (${med.unit.trim()})` : name
+  return labelWithUnit(medName(med, index), med.unit)
 }
 
 // Disabled medication fields are exported too.

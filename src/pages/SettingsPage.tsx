@@ -6,6 +6,7 @@ import { hu } from '@/i18n/hu'
 import { backupFileName, serializeBackup } from '@/lib/backup'
 import { buildCsv } from '@/lib/csv'
 import { todayIso } from '@/lib/dates'
+import { medHasValues } from '@/lib/document'
 import { shareFile } from '@/lib/files'
 import { medName } from '@/lib/meds'
 import { ALL_FIELDS, type Med, type N1Document, type Settings } from '@/types'
@@ -89,21 +90,36 @@ export default function SettingsPage({ doc, onDocument, settings, onSettings }: 
 
       <section className="rounded-xl border border-line bg-card p-4">
         <h2 className="text-sm font-semibold">{hu.settings.medsSection}</h2>
-        {settings.meds.map((med, index) => (
-          <div key={med.id} className="mt-2 flex items-center gap-3">
-            <input
-              value={med.label}
-              onChange={(event) => changeMed(index, { label: event.target.value })}
-              placeholder={medName({ ...med, label: '' }, index)}
-              className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
-            />
-            <Toggle
-              checked={med.enabled}
-              onChange={(on) => changeMed(index, { enabled: on })}
-              label={medName(med, index)}
-            />
-          </div>
-        ))}
+        {settings.meds.map((med, index) => {
+          const unitLocked = medHasValues(doc, med.id)
+          return (
+            <div key={med.id} className="mt-3">
+              <div className="flex items-center gap-3">
+                <input
+                  value={med.label}
+                  onChange={(event) => changeMed(index, { label: event.target.value })}
+                  placeholder={medName({ ...med, label: '' }, index)}
+                  aria-label={medName(med, index)}
+                  className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
+                />
+                <Toggle
+                  checked={med.enabled}
+                  onChange={(on) => changeMed(index, { enabled: on })}
+                  label={medName(med, index)}
+                />
+              </div>
+              <input
+                value={med.unit}
+                readOnly={unitLocked}
+                onChange={(event) => changeMed(index, { unit: event.target.value })}
+                placeholder={hu.settings.unitPlaceholder}
+                aria-label={`${medName(med, index)}: ${hu.settings.unitPlaceholder}`}
+                className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-1.5 text-sm read-only:text-muted focus:border-sage focus:outline-none"
+              />
+              {unitLocked && <p className="mt-1 text-xs text-muted">{hu.settings.unitLocked}</p>}
+            </div>
+          )
+        })}
         <button
           type="button"
           onClick={addMed}
