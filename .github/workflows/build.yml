@@ -27,7 +27,7 @@ jobs:
       - name: Tests
         run: npx vitest run
 
-  # Debug APK artifactként — János letölti, telepíti. Release-út később (F-Droid / GitHub Releases).
+  # Debug APK artifactként + az ígéret őre: nincs INTERNET permission.
   android:
     needs: check
     runs-on: ubuntu-latest
@@ -52,7 +52,9 @@ jobs:
       - name: No-INTERNET guard
         # A termékígéret: az app soha nem kér INTERNET permissiont. Ha bármi
         # (plugin, dependency) visszahozná a merge-elt manifestbe, a build bukik.
-        run: '! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/'
+        run: |
+          test -f android/app/build/intermediates/merged_manifests/debug/processDebugManifest/AndroidManifest.xml
+          ! grep -Rq "android.permission.INTERNET" android/app/build/intermediates/merged_manifests/
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
