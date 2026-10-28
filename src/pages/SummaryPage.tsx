@@ -43,7 +43,7 @@ export default function SummaryPage({ doc, onBack }: Props) {
   const shareCsv = () =>
     shareFile(
       `n1naplo-${options.endDate}.csv`,
-      buildCsv(summaryDocument(doc, options), medName),
+      buildCsv(summaryDocument(doc, options, medName), medName),
       'text/csv',
     )
 

@@ -84,17 +84,30 @@ function stat(key: NumericField, entries: DayEntry[]): FieldStat | null {
 }
 
 // The CSV that goes with a summary holds the same days and leaves out the same things.
-export function summaryDocument(doc: N1Document, options: SummaryOptions): N1Document {
+export function summaryDocument(
+  doc: N1Document,
+  options: SummaryOptions,
+  medName: MedName,
+): N1Document {
+  // Name unlabelled medications before filtering, so "Gyógyszer 2" keeps its number.
+  const meds = doc.settings.meds
+    .map((med, index) => ({ ...med, label: medName(med, index) }))
+    .filter((med) => med.enabled)
+  const fields = shownFields(doc, options)
+  const notes = options.includeNotes && doc.settings.enabledFields.jegyzet
   const entries: Record<string, DayEntry> = {}
   for (const date of rangeDates(options)) {
     const entry = doc.entries[date]
     if (!entry) continue
-    const { jegyzet, sovargas, ...rest } = entry
-    entries[date] = {
-      ...rest,
-      ...(options.includeNotes && jegyzet !== undefined ? { jegyzet } : {}),
-      ...(options.includeCraving && sovargas !== undefined ? { sovargas } : {}),
-    }
+    const kept: DayEntry = { date }
+    const medValues = meds.flatMap((med) => {
+      const value = entry.meds?.[med.id]
+      return value === undefined ? [] : [[med.id, value] as const]
+    })
+    if (medValues.length > 0) kept.meds = Object.fromEntries(medValues)
+    for (const field of fields) if (entry[field] !== undefined) kept[field] = entry[field]
+    if (notes && entry.jegyzet) kept.jegyzet = entry.jegyzet
+    entries[date] = kept
   }
-  return { ...doc, entries }
+  return { ...doc, entries, settings: { ...doc.settings, meds } }
 }

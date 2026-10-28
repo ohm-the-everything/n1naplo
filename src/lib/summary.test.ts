@@ -77,8 +77,23 @@ describe('summaryDocument', () => {
       { sovargas: 3, jegyzet: 'x', izgalom: 2 },
       ...Array(20).fill({ izgalom: 1 }),
     ])
-    const narrowed = summaryDocument(doc, { ...base, includeNotes: false, includeCraving: false })
+    const narrowed = summaryDocument(
+      doc,
+      { ...base, includeNotes: false, includeCraving: false },
+      medName,
+    )
     expect(Object.keys(narrowed.entries)).toHaveLength(14)
     expect(narrowed.entries[END]).toEqual({ date: END, izgalom: 2 })
+  })
+
+  it('leaves out disabled medications, disabled fields and hidden notes, like the PDF', () => {
+    let doc = diary([{ meds: { med1: 1, med2: 9 }, alvas: 7, izgalom: 2, jegyzet: 'titok' }])
+    doc = withSettings(doc, {
+      ...doc.settings,
+      enabledFields: { ...doc.settings.enabledFields, alvas: false, jegyzet: false },
+    })
+    const narrowed = summaryDocument(doc, base, medName)
+    expect(narrowed.settings.meds.map((med) => med.id)).toEqual(['med1'])
+    expect(narrowed.entries[END]).toEqual({ date: END, meds: { med1: 1 }, izgalom: 2 })
   })
 })
