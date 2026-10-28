@@ -6,3 +6,4 @@ dist/
 *.keystore
 *.jks
 keystore.properties
+coverage/
