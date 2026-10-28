@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
 
-// Release-aláírás: az android/keystore.properties-ből, ha létezik (gitignore-olva); különben debug-kulcs.
+// Release-aláírás: az android/keystore.properties-ből, ha létezik (gitignore-olva); különben aláíratlan.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) {
@@ -36,7 +36,7 @@ android {
     }
     buildTypes {
         release {
-            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : signingConfigs.debug
+            signingConfig keystorePropertiesFile.exists() ? signingConfigs.release : null
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
