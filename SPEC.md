@@ -33,10 +33,13 @@ kapcsolhatók a beállításokban.
 
 1. **Napi bevitel** — egy képernyő, nagy tappolható léptetők, 20 mp alatt kitölthető.
    Visszamenőleges kitöltés/javítás naptárból.
-2. **Bevezetés** — első indításkor négy rövid képernyő: mi ez; mi nem (nem orvostechnikai
+2. **Bevezetés** — első indításkor öt rövid képernyő: mi ez; mi nem (nem orvostechnikai
    eszköz, senki nem figyeli, a segítség a Beállítások › Segítség alatt); az adataid (a
-   telefonon maradnak, az appnak nincs internet-engedélye, a mentést te csinálod); esti
-   jelzés — kéred vagy „Most nem".
+   telefonon vannak, az appnak nincs internet-engedélye, a mentést te csinálod);
+   **biztonsági másolat** — kérsz-e másolatot a rendszer mentésébe (Androidon külön a
+   Google-fiókba és az új telefonra költözéshez, iOS-en az iPhone mentésébe), mindegyik
+   mellett a működése és a kockázata, alapból mind ki; esti jelzés — kéred vagy „Most
+   nem". A választás később a beállításokban is átállítható.
 3. **Esti emlékeztető** — **alapból ki**; csak a bevezetésben vagy a beállításokban kért
    jelzés után kér engedélyt. Konfigurálható időpont (alapért. 21:00, helyi idő, az
    óraátállítás után is), megbízható (Doze-túlélő). A hangnem a csend-cikk etikája:
@@ -62,8 +65,9 @@ kapcsolhatók a beállításokban.
    ellenőrzési dátummal; angolul az EU-s 112 és 116 123. „A naplót senki nem figyeli — ha
    bajban vagy, hívj valakit."
 8. **Nyelv** — magyar és angol; a telefon nyelvét követi, a beállításokban felülírható.
-9. **Adatvédelem mint alapérték:** minden adat kizárólag a készüléken. **Az app egyáltalán
-   nem kér INTERNET permissiont.** Nincs analytics, nincs fiók, nincs felhő. Ez a
+9. **Adatvédelem mint alapérték:** a napló a készüléken van, és csak akkor hagyja el, ha te
+   kéred (mentés fájlba, export, vagy a választható rendszermentés-másolat). **Az app
+   egyáltalán nem kér INTERNET permissiont.** Nincs analytics, nincs fiók, nincs felhő. Ez a
    sorstárs-bizalom alapja és a README első mondata.
 
 **Kivéve 1.0-ból:** az „izgalom × adag" keresztkép (összeadott adagokat mutatott, ami
@@ -71,12 +75,20 @@ félrevezet).
 
 ## Tárolás
 
-A napló egyetlen JSON-fájl (`n1naplo.json`) a készülék biztonsági mentésből kizárt
-könyvtárában (iOS: `LibraryNoCloud`). Mentés: ideiglenes fájl, majd csere — egy félbeszakadt
-írás után a régi vagy az új napló marad meg, sosem üres vagy félkész. Sérült fájlt az app
-nem ír felül: félreteszi, és felajánlja a visszaállítást. Androidon a felhős mentés és az
-eszközök közötti átvitel ki van kapcsolva (`allowBackup="false"`, kizáró szabályok): a napló
-csak úgy hagyja el a telefont, ha te mented ki.
+A napló egyetlen JSON-fájl (`n1naplo.json`) a rendszer mentéséből kizárt könyvtárban
+(iOS: `Library/NoCloud`; Androidon az app fájljai, amiket a mentési szabályok kizárnak).
+Mentés: ideiglenes fájl, majd csere — egy félbeszakadt írás után a régi vagy az új napló
+marad meg, sosem üres vagy félkész. Sérült fájlt az app nem ír felül: félreteszi, és
+felajánlja a visszaállítást.
+
+**Rendszermentés csak kérésre.** Ha a felhasználó bekapcsolja, az app a napló másolatát egy
+erre szolgáló mappába is elmenti; kikapcsoláskor a másolatot (a félbemaradt írásával együtt)
+azonnal törli. Új vagy visszaállított telefonon az app ebből a másolatból nyílik meg.
+- Android 9+ (minSdk 28): a felhős mentés csak a `backup/cloud/` mappát viheti, és csak
+  végponttól végpontig titkosítva (képernyőzár nélkül sehogy); az átköltözés csak a
+  `backup/transfer/` mappát. Más nem kerülhet a mentésbe — ezt a CI őrzi.
+- iOS: egy kapcsoló, mert az iCloud-/számítógépes mentés és az átköltözés ugyanaz. A kizárást
+  az Apple irányelvként kezeli, nem garanciaként — ezt az ETHICS.md is kimondja.
 
 ## Stack és build
 
@@ -85,7 +97,7 @@ csak úgy hagyja el a telefont, ha te mented ki.
 - Értesítés: `@capacitor/local-notifications` — előre ütemezett, egyszeri, `allowWhileIdle`
   jelzések; a plugin boot-receivere reboot után visszaállítja őket.
 - Nincs Google Play Services függés; az INTERNET permission a manifestben
-  `tools:node="remove"`-val tiltva.
+  `tools:node="remove"`-val tiltva. Android 9 vagy újabb, iOS 15 vagy újabb.
 - **Nyilvános CI** minden commitra: typecheck + lint + tesztek + etikai őr, debug APK, és
   egy őr, ami bedönti a buildet, ha INTERNET permission kerülne a merge-elt manifestbe.
   Forrásból bárki építhet (README).
