@@ -123,11 +123,11 @@ export default function App() {
         className="mx-auto w-full max-w-md px-5"
         style={{ paddingTop: 'calc(48px + var(--safe-area-top))' }}
       >
-        <p className="text-[15px]">{t.store.loadFailed}</p>
+        <p className="text-[0.9375rem]">{t.store.loadFailed}</p>
         <button
           type="button"
           onClick={() => window.location.reload()}
-          className="mt-4 rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
+          className="mt-4 rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem]"
         >
           {t.store.retry}
         </button>
@@ -171,6 +171,7 @@ export default function App() {
         </div>
       )}
       <main className="mx-auto w-full max-w-md px-5 pt-4">
+        {overlay === null && <h1 className="sr-only">{t.tabs[tab]}</h1>}
         {overlay === 'summary' && <SummaryPage doc={doc} onBack={() => setOverlay(null)} />}
         {overlay === 'help' && <HelpPage onBack={() => setOverlay(null)} />}
         {overlay === null && tab === 'entry' && (

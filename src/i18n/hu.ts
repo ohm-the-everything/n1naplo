@@ -213,6 +213,11 @@ export const hu = {
     privacy:
       'Az app nem kér internet-hozzáférést, nem gyűjt és nem küld adatot. A napló a telefonodon van: csak akkor hagyja el, ha te mented ki, vagy ha másolatot kérsz a rendszer mentésébe.',
   },
+  a11y: {
+    increase: '{field} növelése',
+    decrease: '{field} csökkentése',
+    clear: '{field} törlése',
+  },
   common: {
     cancel: 'Mégse',
   },

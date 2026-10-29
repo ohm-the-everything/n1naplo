@@ -12,11 +12,15 @@ export default function HelpPage({ onBack }: Props) {
   ]
   return (
     <div className="flex flex-col gap-3">
-      <button type="button" onClick={onBack} className="self-start text-sm font-medium text-sage">
+      <button
+        type="button"
+        onClick={onBack}
+        className="min-h-11 self-start text-sm font-medium text-sage"
+      >
         ← {t.summary.back}
       </button>
       <h1 className="text-lg font-semibold">{t.help.title}</h1>
-      <p className="text-[15px] font-medium">{t.help.nobody}</p>
+      <p className="text-[0.9375rem] font-medium">{t.help.nobody}</p>
       {NUMBERS.map((number) => (
         <a
           key={number.tel}

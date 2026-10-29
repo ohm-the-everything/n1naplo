@@ -58,7 +58,7 @@ export default function RestoreFromFile({ current, label, onApply }: Props) {
       <button
         type="button"
         onClick={() => void pick()}
-        className="mt-3 w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
+        className="mt-3 w-full rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem]"
       >
         {label}
       </button>

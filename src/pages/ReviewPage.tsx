@@ -47,7 +47,7 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   }, [hasData, gated, lastOpen, today, settings, onSettings])
 
   if (!hasData) {
-    return <p className="py-24 text-center text-[15px] text-muted">{t.review.empty}</p>
+    return <p className="py-24 text-center text-[0.9375rem] text-muted">{t.review.empty}</p>
   }
 
   if (gated) {
@@ -120,7 +120,7 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
             key={option}
             type="button"
             onClick={() => setDays(option)}
-            className={`rounded-full px-4 py-1.5 text-sm ${
+            className={`min-h-11 rounded-full px-4 py-1.5 text-sm ${
               days === option ? 'bg-sage text-white' : 'bg-sage-soft text-sage'
             }`}
           >

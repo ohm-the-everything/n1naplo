@@ -68,7 +68,7 @@ export default function EntryPage({
         <button
           type="button"
           onClick={openDatePicker}
-          className="flex flex-1 items-center justify-center gap-2 py-3 text-[15px] font-medium"
+          className="flex flex-1 items-center justify-center gap-2 py-3 text-[0.9375rem] font-medium"
         >
           <CalendarDays size={16} className="text-muted" />
           {formatDate(date, t.dateLocale)}
@@ -190,7 +190,7 @@ export default function EntryPage({
           onChange={(event) => patch({ jegyzet: event.target.value || undefined })}
           placeholder={t.entry.notePlaceholder}
           rows={5}
-          className="mt-3 w-full resize-y rounded-xl border border-line bg-card px-4 py-3 text-[15px] leading-relaxed placeholder:text-muted focus:border-sage focus:outline-none"
+          className="mt-3 w-full resize-y rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem] leading-relaxed placeholder:text-muted focus:border-sage focus:outline-none"
         />
       )}
 
@@ -200,7 +200,7 @@ export default function EntryPage({
       <button
         type="button"
         onClick={onOpenHelp}
-        className="mt-2 self-center text-sm font-medium text-sage underline"
+        className="mt-2 min-h-11 self-center text-sm font-medium text-sage underline"
       >
         {t.help.title}
       </button>

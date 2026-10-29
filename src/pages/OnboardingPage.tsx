@@ -20,7 +20,7 @@ export default function OnboardingPage({ settings, onDone }: Props) {
     onDone({ ...draft, reminderEnabled, onboardedAt: new Date().toISOString() })
 
   return (
-    <div
+    <main
       className="mx-auto flex min-h-screen w-full max-w-md flex-col px-5"
       style={{
         paddingTop: 'calc(32px + var(--safe-area-top))',
@@ -94,17 +94,17 @@ export default function OnboardingPage({ settings, onDone }: Props) {
           {t.onboarding.back}
         </button>
       )}
-    </div>
+    </main>
   )
 }
 
-const PRIMARY = 'w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white'
-const SECONDARY = 'mt-2 w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px]'
+const PRIMARY = 'w-full rounded-xl bg-sage px-4 py-3 text-[0.9375rem] font-medium text-white'
+const SECONDARY = 'mt-2 w-full rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem]'
 
 function Title({ children }: { children: string }) {
   return <h1 className="mt-4 text-xl font-semibold first:mt-0">{children}</h1>
 }
 
 function Body({ children }: { children: string }) {
-  return <p className="mt-2 text-[15px] leading-relaxed text-muted">{children}</p>
+  return <p className="mt-2 text-[0.9375rem] leading-relaxed text-muted">{children}</p>
 }

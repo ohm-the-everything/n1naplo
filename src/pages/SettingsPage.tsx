@@ -121,7 +121,7 @@ export default function SettingsPage({
                   onSettings(settings, { resyncReminder: true }),
                 )
               }
-              className="mt-1 font-medium text-sage underline"
+              className="mt-1 min-h-11 font-medium text-sage underline"
             >
               {t.settings.reminderExact}
             </button>
@@ -144,7 +144,7 @@ export default function SettingsPage({
               type="button"
               aria-pressed={settings.locale === value}
               onClick={() => onSettings({ ...settings, locale: value })}
-              className={`rounded-full px-4 py-1.5 text-sm ${
+              className={`min-h-11 rounded-full px-4 py-1.5 text-sm ${
                 settings.locale === value ? 'bg-sage text-white' : 'bg-sage-soft text-sage'
               }`}
             >
@@ -166,7 +166,7 @@ export default function SettingsPage({
                   onChange={(event) => changeMed(index, { label: event.target.value })}
                   placeholder={medName({ ...med, label: '' }, index)}
                   aria-label={medName(med, index)}
-                  className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] focus:border-sage focus:outline-none"
+                  className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[0.9375rem] focus:border-sage focus:outline-none"
                 />
                 <Toggle
                   checked={med.enabled}
@@ -227,7 +227,7 @@ export default function SettingsPage({
         <button
           type="button"
           onClick={() => setSaving(true)}
-          className="mt-3 w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
+          className="mt-3 w-full rounded-xl bg-sage px-4 py-3 text-[0.9375rem] font-medium text-white"
         >
           {t.data.save}
         </button>
@@ -257,7 +257,7 @@ export default function SettingsPage({
       <section className="rounded-xl border border-line bg-card p-4">
         <h2 className="text-sm font-semibold">{t.protection.section}</h2>
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-[15px] font-medium">{t.protection.screenshotsTitle}</span>
+          <span className="text-[0.9375rem] font-medium">{t.protection.screenshotsTitle}</span>
           <Toggle
             checked={settings.protection.allowScreenshots}
             onChange={(allowScreenshots) =>
@@ -282,7 +282,7 @@ export default function SettingsPage({
       <button
         type="button"
         onClick={onOpenHelp}
-        className="rounded-xl border border-line bg-card p-4 text-left text-[15px] font-medium"
+        className="rounded-xl border border-line bg-card p-4 text-left text-[0.9375rem] font-medium"
       >
         {t.help.title}
       </button>

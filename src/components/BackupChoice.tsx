@@ -55,7 +55,7 @@ function Option({ title, how, risk, checked, onChange }: OptionProps) {
   return (
     <div className="mt-3 border-t border-line pt-3">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[15px] font-medium">{title}</span>
+        <span className="text-[0.9375rem] font-medium">{title}</span>
         <Toggle checked={checked} onChange={onChange} label={title} />
       </div>
       <p className="mt-1 text-sm text-muted">{how}</p>

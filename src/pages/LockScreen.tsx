@@ -26,7 +26,7 @@ export default function LockScreen({ onUnlocked }: Props) {
       <button
         type="button"
         onClick={() => void unlock()}
-        className="rounded-xl bg-sage px-6 py-3 text-[15px] font-medium text-paper"
+        className="rounded-xl bg-sage px-6 py-3 text-[0.9375rem] font-medium text-paper"
       >
         {t.lock.unlock}
       </button>

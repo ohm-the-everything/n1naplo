@@ -20,12 +20,12 @@ export default function RecoveryPage({ onStartEmpty, onRestore }: Props) {
       style={{ paddingTop: 'calc(48px + var(--safe-area-top))' }}
     >
       <h1 className="text-lg font-semibold">{t.recovery.title}</h1>
-      <p className="mt-3 text-[15px] text-muted">{t.recovery.body}</p>
+      <p className="mt-3 text-[0.9375rem] text-muted">{t.recovery.body}</p>
       <RestoreFromFile current={emptyDocument()} label={t.recovery.restore} onApply={onRestore} />
       <button
         type="button"
         onClick={() => setConfirming(true)}
-        className="mt-6 w-full rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
+        className="mt-6 w-full rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem]"
       >
         {t.recovery.startEmpty}
       </button>

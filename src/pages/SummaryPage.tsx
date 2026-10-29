@@ -49,10 +49,14 @@ export default function SummaryPage({ doc, onBack }: Props) {
     )
 
   const chip = (on: boolean) =>
-    `rounded-full px-4 py-1.5 text-sm ${on ? 'bg-sage text-white' : 'bg-sage-soft text-sage'}`
+    `min-h-11 rounded-full px-4 py-1.5 text-sm ${on ? 'bg-sage text-white' : 'bg-sage-soft text-sage'}`
   return (
     <div className="flex flex-col gap-3">
-      <button type="button" onClick={onBack} className="self-start text-sm font-medium text-sage">
+      <button
+        type="button"
+        onClick={onBack}
+        className="min-h-11 self-start text-sm font-medium text-sage"
+      >
         ← {t.summary.back}
       </button>
       <h1 className="text-lg font-semibold">{t.summary.title}</h1>
@@ -152,14 +156,14 @@ export default function SummaryPage({ doc, onBack }: Props) {
       <button
         type="button"
         onClick={() => void sharePdf()}
-        className="rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
+        className="rounded-xl bg-sage px-4 py-3 text-[0.9375rem] font-medium text-white"
       >
         {t.summary.sharePdf}
       </button>
       <button
         type="button"
         onClick={() => void shareCsv()}
-        className="rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
+        className="rounded-xl border border-line bg-card px-4 py-3 text-[0.9375rem]"
       >
         {t.summary.shareCsv}
       </button>

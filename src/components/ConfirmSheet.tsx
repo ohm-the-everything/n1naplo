@@ -31,14 +31,14 @@ export default function ConfirmSheet({ title, body, confirmLabel, onConfirm, onC
           <button
             type="button"
             onClick={onCancel}
-            className="flex-1 rounded-xl border border-line px-4 py-3 text-[15px]"
+            className="flex-1 rounded-xl border border-line px-4 py-3 text-[0.9375rem]"
           >
             {t.common.cancel}
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="flex-1 rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-paper"
+            className="flex-1 rounded-xl bg-sage px-4 py-3 text-[0.9375rem] font-medium text-paper"
           >
             {confirmLabel}
           </button>

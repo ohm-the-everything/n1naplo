@@ -12,7 +12,7 @@ const A4: [number, number] = [595.28, 841.89]
 const MARGIN = 48
 const WIDTH = A4[0] - 2 * MARGIN
 const INK = rgb(0.17, 0.15, 0.14)
-const MUTED = rgb(0.48, 0.45, 0.4)
+const MUTED = rgb(0.431, 0.4, 0.357)
 const CELLS_PER_ROW = 15
 
 class Writer {

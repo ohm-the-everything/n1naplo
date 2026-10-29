@@ -50,7 +50,9 @@ export default function TopicsCard({ topics, onChange, onOpenSummary }: Props) {
           >
             <Check size={14} />
           </button>
-          <span className={`flex-1 text-[15px] ${topic.done ? 'text-muted line-through' : ''}`}>
+          <span
+            className={`flex-1 text-[0.9375rem] ${topic.done ? 'text-muted line-through' : ''}`}
+          >
             {topic.text}
           </span>
           <button
@@ -71,7 +73,7 @@ export default function TopicsCard({ topics, onChange, onOpenSummary }: Props) {
             if (event.key === 'Enter') add()
           }}
           placeholder={t.topics.placeholder}
-          className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[15px] placeholder:text-muted focus:border-sage focus:outline-none"
+          className="min-w-0 flex-1 rounded-lg border border-line bg-paper px-3 py-2 text-[0.9375rem] placeholder:text-muted focus:border-sage focus:outline-none"
         />
         <button
           type="button"
@@ -83,7 +85,11 @@ export default function TopicsCard({ topics, onChange, onOpenSummary }: Props) {
           <Plus size={20} />
         </button>
       </div>
-      <button type="button" onClick={onOpenSummary} className="mt-3 text-sm font-medium text-sage">
+      <button
+        type="button"
+        onClick={onOpenSummary}
+        className="mt-3 min-h-11 text-sm font-medium text-sage"
+      >
         {t.topics.toSummary}
       </button>
     </div>

@@ -22,7 +22,7 @@ export default function AppLockChoice({ value, onChange }: Props) {
   return (
     <div className="mt-3 border-t border-line pt-3">
       <div className="flex items-center justify-between gap-3">
-        <span className="text-[15px] font-medium">{t.lock.choiceTitle}</span>
+        <span className="text-[0.9375rem] font-medium">{t.lock.choiceTitle}</span>
         <Toggle checked={value} onChange={(on) => void toggle(on)} label={t.lock.choiceTitle} />
       </div>
       <p className="mt-1 text-sm text-muted">{t.lock.choiceHow}</p>

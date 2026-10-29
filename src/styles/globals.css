@@ -4,7 +4,7 @@
   --color-paper: #faf6ef;
   --color-card: #fffdf8;
   --color-ink: #2b2723;
-  --color-muted: #7a7266;
+  --color-muted: #6e665b;
   --color-line: #e7dfd2;
   --color-sage: #3d6b5e;
   --color-sage-soft: #e3ede9;
@@ -32,4 +32,9 @@ body {
   --safe-area-top: env(safe-area-inset-top, 0px);
   --safe-area-bottom: env(safe-area-inset-bottom, 0px);
   --nav-height: 4.5rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
 }

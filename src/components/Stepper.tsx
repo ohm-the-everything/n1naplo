@@ -1,5 +1,6 @@
 import { X } from 'lucide-react'
 import { useT } from '@/i18n'
+import { fill } from '@/lib/text'
 
 type Props = {
   label: string
@@ -25,15 +26,15 @@ export default function Stepper({ label, hint, value, min, max, step, onChange }
   return (
     <div className="flex items-center gap-2 border-b border-line py-2 last:border-b-0">
       <div className="flex-1">
-        <div className="text-[15px]">{label}</div>
+        <div className="text-[0.9375rem]">{label}</div>
         {hint && <div className="text-xs text-muted">{hint}</div>}
       </div>
       {value !== undefined && (
         <button
           type="button"
-          aria-label={t.entry.clear}
+          aria-label={fill(t.a11y.clear, { field: label })}
           onClick={() => onChange(undefined)}
-          className="p-2 text-muted"
+          className="flex h-11 w-11 items-center justify-center text-muted"
         >
           <X size={16} />
         </button>
@@ -41,15 +42,19 @@ export default function Stepper({ label, hint, value, min, max, step, onChange }
       <button
         type="button"
         onClick={decrease}
+        aria-label={fill(t.a11y.decrease, { field: label })}
         disabled={value === undefined || value <= min}
         className="h-12 w-12 rounded-full bg-sage-soft text-xl font-medium text-sage disabled:opacity-30"
       >
         −
       </button>
-      <div className="w-12 text-center text-lg font-semibold tabular-nums">{value ?? '–'}</div>
+      <div aria-live="polite" className="w-12 text-center text-lg font-semibold tabular-nums">
+        {value ?? '–'}
+      </div>
       <button
         type="button"
         onClick={increase}
+        aria-label={fill(t.a11y.increase, { field: label })}
         disabled={value !== undefined && value >= max}
         className="h-12 w-12 rounded-full bg-sage-soft text-xl font-medium text-sage disabled:opacity-30"
       >

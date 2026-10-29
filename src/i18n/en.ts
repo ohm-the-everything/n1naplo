@@ -214,6 +214,11 @@ export const en: Messages = {
     privacy:
       'The app has no internet access and collects or sends no data. Your diary lives on your phone: it leaves only when you save it out, or when you ask for a copy in the system backup.',
   },
+  a11y: {
+    increase: 'Increase {field}',
+    decrease: 'Decrease {field}',
+    clear: 'Clear {field}',
+  },
   common: {
     cancel: 'Cancel',
   },
