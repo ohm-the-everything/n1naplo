@@ -1,0 +1,15 @@
+name: Idea
+description: Something that would make the diary more useful.
+labels: [idea]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        N1 Napló stays small, offline and private: no accounts, no cloud, no network, no dose
+        advice. Ideas inside those limits are very welcome. **Never include real diary data.**
+  - type: textarea
+    id: need
+    attributes:
+      label: What would you like to do, and why?
+    validations:
+      required: true
