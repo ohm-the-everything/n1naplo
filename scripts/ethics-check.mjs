@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Guards for ETHICS.md: pure checks plus a CLI that exits 1 on any violation.
-import { readFileSync } from 'node:fs'
+import { existsSync, readdirSync, readFileSync, statSync } from 'node:fs'
 import { fileURLToPath } from 'node:url'
 
 // Only the opt-in copy folders may be backed up; a section without an include means everything.
@@ -68,16 +68,105 @@ function checkOldRules(found) {
   return loose.map((include) => `backup_rules: ${include.target} requireFlags is not ${OLD_RULES[include.target]}`)
 }
 
-function readRepo(path) {
-  return readFileSync(new URL(`../${path}`, import.meta.url), 'utf8')
+const TRACKERS =
+  /firebase|sentry|posthog|mixpanel|amplitude|segment|analytics|appsflyer|adjust|branch|onesignal|facebook|admob|google-mobile-ads|datadog|bugsnag|crashlytics|hotjar|logrocket/i
+
+export function findTrackerDependencies(lockfile) {
+  const names = Object.keys(lockfile.packages ?? {})
+    .filter(Boolean)
+    .map((path) => path.replace(/^.*node_modules\//, ''))
+  return [...new Set(names.filter((name) => TRACKERS.test(name)))]
+}
+
+const NETWORK = /\bfetch\(|XMLHttpRequest|WebSocket|EventSource|sendBeacon/
+
+export function findNetworkCalls(files) {
+  return files
+    .filter(({ path }) => !/\.test\./.test(path))
+    .flatMap(({ path, text }) => {
+      const match = text.match(NETWORK)
+      return match ? [{ path, text: match[0] }] : []
+    })
+}
+
+export function checkIosPrivacyManifest(plist) {
+  const violations = []
+  if (!/<key>NSPrivacyTracking<\/key>\s*<false\/>/.test(plist)) {
+    violations.push('PrivacyInfo: NSPrivacyTracking must be false')
+  }
+  if (!/<key>NSPrivacyCollectedDataTypes<\/key>\s*(<array\/>|<array>\s*<\/array>)/.test(plist)) {
+    violations.push('PrivacyInfo: NSPrivacyCollectedDataTypes must be empty')
+  }
+  return violations
+}
+
+// Hungarian stems match inside words; English terms match whole words ("cure" ≠ "secure").
+const BANNED = [
+  ['optimális adag', /optimális adag/i],
+  ['optimal dose', /\boptimal dose/i],
+  ['hatékonyság', /hatékonyság/i],
+  ['effectiveness', /\beffectiveness\b/i],
+  ['diagnóz/diagnos', /diagnóz|diagnos/i],
+  ['gyógyít', /gyógyít/i],
+  ['cure', /\bcures?\b/i],
+  ['klinikailag', /klinikailag/i],
+  ['clinically', /\bclinically\b/i],
+  ['streak', /\bstreaks?\b/i],
+  ['jelvény', /jelvény/i],
+  ['badge', /\bbadges?\b/i],
+  ['kezeli az ADHD', /kezeli az ADHD/i],
+  ['treats ADHD', /\btreats ADHD/i],
+  ['Leletbemutatás', /leletbemutatás/i],
+]
+// The store-required disclaimers say exactly what the app does not do.
+const DISCLAIMERS = [/nem diagnosztizál\b/gi, /doesn[’']t diagnose/gi]
+
+function texts(tree) {
+  if (typeof tree === 'string') return [tree]
+  return Object.values(tree).flatMap(texts)
+}
+
+export function findBannedClaims(messageTrees) {
+  const copy = messageTrees
+    .flatMap(texts)
+    .map((text) => DISCLAIMERS.reduce((rest, disclaimer) => rest.replace(disclaimer, ''), text))
+    .join('\n')
+  return BANNED.filter(([, pattern]) => pattern.test(copy)).map(([name]) => name)
+}
+
+export function findMissingProofs(ethicsMd, exists) {
+  const cited = [...ethicsMd.matchAll(/`((?:src|scripts|android|ios)\/[^`\s]+|[A-Z]+\.md)`/g)].map((m) => m[1])
+  return [...new Set(cited)].filter((path) => !exists(path))
+}
+
+function sourceFiles(root, dir) {
+  return readdirSync(new URL(dir, root)).flatMap((name) => {
+    const path = `${dir}${name}`
+    if (statSync(new URL(path, root)).isDirectory()) return sourceFiles(root, `${path}/`)
+    return /\.(ts|tsx|js|mjs)$/.test(name) ? [{ path, text: readFileSync(new URL(path, root), 'utf8') }] : []
+  })
+}
+
+export function checkRepository(root) {
+  const read = (path) => readFileSync(new URL(path, root), 'utf8')
+  return [
+    ...checkAndroidBackup({
+      manifest: read('android/app/src/main/AndroidManifest.xml'),
+      extractionRules: read('android/app/src/main/res/xml/data_extraction_rules.xml'),
+      backupRules: read('android/app/src/main/res/xml/backup_rules.xml'),
+    }),
+    ...findTrackerDependencies(JSON.parse(read('package-lock.json'))).map((name) => `tracker dependency: ${name}`),
+    ...findNetworkCalls(sourceFiles(root, 'src/')).map((hit) => `network call in ${hit.path}: ${hit.text}`),
+    ...checkIosPrivacyManifest(read('ios/App/App/PrivacyInfo.xcprivacy')),
+    ...findBannedClaims([read('src/i18n/hu.ts'), read('src/i18n/en.ts')]).map((claim) => `banned copy: ${claim}`),
+    ...findMissingProofs(read('ETHICS.md'), (path) => existsSync(new URL(path, root))).map(
+      (path) => `ETHICS.md cites a missing file: ${path}`,
+    ),
+  ]
 }
 
 function main() {
-  const violations = checkAndroidBackup({
-    manifest: readRepo('android/app/src/main/AndroidManifest.xml'),
-    extractionRules: readRepo('android/app/src/main/res/xml/data_extraction_rules.xml'),
-    backupRules: readRepo('android/app/src/main/res/xml/backup_rules.xml'),
-  })
+  const violations = checkRepository(new URL('../', import.meta.url))
   for (const violation of violations) console.error(`ethics-check: ${violation}`)
   if (violations.length > 0) process.exit(1)
   console.log('ethics-check: OK')
