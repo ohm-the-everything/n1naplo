@@ -3,7 +3,7 @@
 **Mi ez:** nyílt forráskódú Android- és iOS-app n-of-1 öntesztelési naplóhoz — AuDHD-s és
 neurodivergens sorstársaknak. Napi egy sor, húsz másodperc; hetek alatt személyes
 idősor arról, mit szedtél és hogy voltál, amit a következő konzultációra magaddal vihetsz.
-Kiadó: OHM Corp Kft. Licenc: MIT.
+Kiadó: Ohm Corp Kft. Licenc: MIT.
 
 **Mi nem:** nem orvostechnikai eszköz. Nem diagnosztizál, nem kezel, nem javasol és nem
 számol adagot. A naplót senki nem figyeli.
