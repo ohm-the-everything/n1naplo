@@ -38,6 +38,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@biomejs/biome": "^2.4.4",
+    "@capacitor/assets": "^3.0.5",
     "@playwright/test": "^1.64.1",
     "@tailwindcss/vite": "^4.2.0",
     "@types/node": "^25.2.3",
@@ -45,6 +46,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.4",
     "@vitest/coverage-v8": "^4.1.10",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.2.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1",

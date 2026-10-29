@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024" height="1024">
+  <rect id="background" width="1024" height="1024" fill="#FAF6EF"/>
+  <g id="monogram" transform="translate(7 -27)" fill="none" stroke="#3D6B5E" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M330 640 V360 L530 640 V360" stroke-width="64"/>
+    <path d="M610 420 L680 360 V640" stroke-width="64"/>
+    <path d="M330 730 H700" stroke-width="40"/>
+  </g>
+</svg>
