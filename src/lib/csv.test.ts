@@ -1,8 +1,9 @@
 import { describe, expect, it } from 'vitest'
+import { hu } from '@/i18n/hu'
 import type { DayEntry, Med } from '@/types'
 import { buildCsv, escapeField, parseCsv } from './csv'
 import { emptyDocument } from './document'
-import { medName } from './meds'
+import { medNamer } from './meds'
 
 function csvOf(entries: DayEntry[], medList: Med[]): string {
   const base = emptyDocument()
@@ -14,6 +15,7 @@ function csvOf(entries: DayEntry[], medList: Med[]): string {
   return buildCsv(doc, medName)
 }
 
+const medName = medNamer(hu)
 const meds: Med[] = [
   { id: 'med1', label: 'XR', unit: '', enabled: true },
   { id: 'med2', label: 'IR', unit: '', enabled: true },

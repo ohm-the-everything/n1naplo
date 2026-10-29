@@ -1,9 +1,7 @@
 import { Capacitor } from '@capacitor/core'
 import { LocalNotifications } from '@capacitor/local-notifications'
-import type { hu } from '@/i18n/hu'
+import type { Messages } from '@/i18n'
 import type { Settings } from '@/types'
-
-type Messages = typeof hu
 
 // Not the plugin's `on` repeat: it reschedules via a weak setExact(RTC) alarm that Doze
 // defers, so reminders silently stopped (Samsung, 2026-08). Instead, 14 one-shot `at`

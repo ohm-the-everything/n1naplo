@@ -1,22 +1,22 @@
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 
 type Props = {
   onBack: () => void
 }
 
-const NUMBERS = [
-  { tel: '112', label: '112', text: hu.help.emergency },
-  { tel: '116123', label: '116-123', text: hu.help.support },
-]
-
 export default function HelpPage({ onBack }: Props) {
+  const t = useT()
+  const NUMBERS = [
+    { tel: '112', label: '112', text: t.help.emergency },
+    { tel: '116123', label: t.help.supportNumber, text: t.help.support },
+  ]
   return (
     <div className="flex flex-col gap-3">
       <button type="button" onClick={onBack} className="self-start text-sm font-medium text-sage">
-        ← {hu.summary.back}
+        ← {t.summary.back}
       </button>
-      <h1 className="text-lg font-semibold">{hu.help.title}</h1>
-      <p className="text-[15px] font-medium">{hu.help.nobody}</p>
+      <h1 className="text-lg font-semibold">{t.help.title}</h1>
+      <p className="text-[15px] font-medium">{t.help.nobody}</p>
       {NUMBERS.map((number) => (
         <a
           key={number.tel}
@@ -29,8 +29,9 @@ export default function HelpPage({ onBack }: Props) {
           <span className="mt-1 block text-sm">{number.text}</span>
         </a>
       ))}
-      <p className="text-xs text-muted">{hu.help.checked}</p>
-      <p className="text-sm text-muted">{hu.help.notMedical}</p>
+      <p className="text-sm">{t.help.abroad}</p>
+      <p className="text-xs text-muted">{t.help.checked}</p>
+      <p className="text-sm text-muted">{t.help.notMedical}</p>
     </div>
   )
 }

@@ -1,12 +1,12 @@
 import { useState } from 'react'
 import ConfirmSheet from '@/components/ConfirmSheet'
 import PassphraseSheet from '@/components/PassphraseSheet'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import { type ImportPlan, readImport } from '@/lib/backup'
 import { decryptBackup, isEncryptedBackup } from '@/lib/crypto'
 import type { ParseError } from '@/lib/document'
 import { pickTextFile } from '@/lib/files'
-import { medName } from '@/lib/meds'
+import { medNamer } from '@/lib/meds'
 import { fill } from '@/lib/text'
 import type { N1Document } from '@/types'
 
@@ -16,14 +16,15 @@ type Props = {
   onApply: (next: N1Document) => void
 }
 
-const ERRORS: Record<ParseError, string> = {
-  'not-json': hu.data.notN1,
-  'not-n1': hu.data.notN1,
-  'newer-version': hu.data.newer,
-  invalid: hu.data.invalid,
-}
-
 export default function RestoreFromFile({ current, label, onApply }: Props) {
+  const t = useT()
+  const medName = medNamer(t)
+  const ERRORS: Record<ParseError, string> = {
+    'not-json': t.data.notN1,
+    'not-n1': t.data.notN1,
+    'newer-version': t.data.newer,
+    invalid: t.data.invalid,
+  }
   const [plan, setPlan] = useState<ImportPlan | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [sealed, setSealed] = useState<{ name: string; text: string } | null>(null)
@@ -46,7 +47,7 @@ export default function RestoreFromFile({ current, label, onApply }: Props) {
   const unlock = async (passphrase: string) => {
     if (!sealed) return
     const opened = await decryptBackup(sealed.text, passphrase)
-    if (!opened.ok) return setPassError(hu.data.wrongPassphrase)
+    if (!opened.ok) return setPassError(t.data.wrongPassphrase)
     setSealed(null)
     setPassError(null)
     readPlan({ name: sealed.name, text: opened.value })
@@ -79,13 +80,13 @@ export default function RestoreFromFile({ current, label, onApply }: Props) {
       )}
       {plan && (
         <ConfirmSheet
-          title={plan.kind === 'restore' ? hu.data.restoreTitle : hu.data.importTitle}
+          title={plan.kind === 'restore' ? t.data.restoreTitle : t.data.importTitle}
           body={
             plan.kind === 'restore'
-              ? fill(hu.data.restoreBody, { before: plan.daysBefore, after: plan.daysAfter })
-              : fill(hu.data.importBody, { days: plan.days, meds: plan.addedMeds.length })
+              ? fill(t.data.restoreBody, { before: plan.daysBefore, after: plan.daysAfter })
+              : fill(t.data.importBody, { days: plan.days, meds: plan.addedMeds.length })
           }
-          confirmLabel={plan.kind === 'restore' ? hu.data.restoreConfirm : hu.data.importConfirm}
+          confirmLabel={plan.kind === 'restore' ? t.data.restoreConfirm : t.data.importConfirm}
           onConfirm={() => {
             onApply(plan.doc)
             setPlan(null)

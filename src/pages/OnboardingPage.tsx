@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import AppLockChoice from '@/components/AppLockChoice'
 import BackupChoice from '@/components/BackupChoice'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import { fill } from '@/lib/text'
 import type { Settings } from '@/types'
 
@@ -13,6 +13,7 @@ type Props = {
 const STEPS = 5
 
 export default function OnboardingPage({ settings, onDone }: Props) {
+  const t = useT()
   const [step, setStep] = useState(1)
   const [draft, setDraft] = useState(settings)
   const finish = (reminderEnabled: boolean) =>
@@ -26,26 +27,26 @@ export default function OnboardingPage({ settings, onDone }: Props) {
         paddingBottom: 'calc(24px + var(--safe-area-bottom))',
       }}
     >
-      <p className="text-xs text-muted">{fill(hu.onboarding.step, { n: step, total: STEPS })}</p>
+      <p className="text-xs text-muted">{fill(t.onboarding.step, { n: step, total: STEPS })}</p>
       <div className="mt-6 flex-1">
         {step === 1 && (
           <>
-            <Title>{hu.onboarding.whatTitle}</Title>
-            <Body>{hu.onboarding.whatBody}</Body>
-            <Title>{hu.onboarding.notTitle}</Title>
-            <Body>{hu.onboarding.notBody}</Body>
+            <Title>{t.onboarding.whatTitle}</Title>
+            <Body>{t.onboarding.whatBody}</Body>
+            <Title>{t.onboarding.notTitle}</Title>
+            <Body>{t.onboarding.notBody}</Body>
           </>
         )}
         {step === 2 && (
           <>
-            <Title>{hu.onboarding.dataTitle}</Title>
-            <Body>{hu.onboarding.dataBody}</Body>
+            <Title>{t.onboarding.dataTitle}</Title>
+            <Body>{t.onboarding.dataBody}</Body>
           </>
         )}
         {step === 3 && (
           <>
-            <Title>{hu.onboarding.backupTitle}</Title>
-            <Body>{hu.backup.intro}</Body>
+            <Title>{t.onboarding.backupTitle}</Title>
+            <Body>{t.backup.intro}</Body>
             <BackupChoice
               value={draft.backup}
               onChange={(backup) => setDraft({ ...draft, backup })}
@@ -54,7 +55,7 @@ export default function OnboardingPage({ settings, onDone }: Props) {
         )}
         {step === 4 && (
           <>
-            <Title>{hu.onboarding.lockTitle}</Title>
+            <Title>{t.onboarding.lockTitle}</Title>
             <AppLockChoice
               value={draft.protection.appLock}
               onChange={(appLock) =>
@@ -65,22 +66,22 @@ export default function OnboardingPage({ settings, onDone }: Props) {
         )}
         {step === 5 && (
           <>
-            <Title>{hu.onboarding.reminderTitle}</Title>
-            <Body>{hu.onboarding.reminderBody}</Body>
+            <Title>{t.onboarding.reminderTitle}</Title>
+            <Body>{t.onboarding.reminderBody}</Body>
           </>
         )}
       </div>
       {step < STEPS ? (
         <button type="button" onClick={() => setStep(step + 1)} className={PRIMARY}>
-          {hu.onboarding.next}
+          {t.onboarding.next}
         </button>
       ) : (
         <>
           <button type="button" onClick={() => finish(true)} className={PRIMARY}>
-            {hu.onboarding.reminderYes}
+            {t.onboarding.reminderYes}
           </button>
           <button type="button" onClick={() => finish(false)} className={SECONDARY}>
-            {hu.onboarding.reminderNo}
+            {t.onboarding.reminderNo}
           </button>
         </>
       )}
@@ -90,7 +91,7 @@ export default function OnboardingPage({ settings, onDone }: Props) {
           onClick={() => setStep(step - 1)}
           className="mt-2 py-2 text-sm text-muted"
         >
-          {hu.onboarding.back}
+          {t.onboarding.back}
         </button>
       )}
     </div>

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import Scatter from '@/components/Scatter'
 import Sparkline from '@/components/Sparkline'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import { addDays, daysBetween, todayIso } from '@/lib/dates'
-import { labelWithUnit, medName } from '@/lib/meds'
+import { labelWithUnit, medNamer } from '@/lib/meds'
 import type { DayEntry, NumericField, Settings } from '@/types'
 
 type Props = {
@@ -28,6 +28,8 @@ function lastValue(values: (number | undefined)[]): number | undefined {
 }
 
 export default function ReviewPage({ entries, settings, onSettings }: Props) {
+  const t = useT()
+  const medName = medNamer(t)
   const [days, setDays] = useState<7 | 30>(7)
   const [unlocked, setUnlocked] = useState(false)
   const today = todayIso()
@@ -45,20 +47,20 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
   }, [hasData, gated, lastOpen, today, settings, onSettings])
 
   if (!hasData) {
-    return <p className="py-24 text-center text-[15px] text-muted">{hu.review.empty}</p>
+    return <p className="py-24 text-center text-[15px] text-muted">{t.review.empty}</p>
   }
 
   if (gated) {
     return (
       <div className="flex flex-col items-center gap-3 py-20 text-center">
-        <p className="font-medium">{hu.review.gateTitle}</p>
-        <p className="max-w-xs text-sm text-muted">{hu.review.gateBody}</p>
+        <p className="font-medium">{t.review.gateTitle}</p>
+        <p className="max-w-xs text-sm text-muted">{t.review.gateBody}</p>
         <button
           type="button"
           onClick={() => setUnlocked(true)}
           className="mt-2 rounded-full bg-sage-soft px-5 py-2.5 text-sm font-medium text-sage"
         >
-          {hu.review.gateOpen}
+          {t.review.gateOpen}
         </button>
       </div>
     )
@@ -97,12 +99,12 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
       1,
     )
   }
-  addCard('alvas', hu.fields.alvas, 0, 8)
-  addCard('izgalom', hu.fields.izgalom, 1, 5)
-  addCard('szorongas', hu.fields.szorongas, 1, 5)
-  addCard('unalom', hu.fields.unalom, 1, 5)
-  addCard('hangulat', hu.fields.hangulat, 1, 5)
-  addCard('sovargas', hu.fields.sovargas, 0, 5)
+  addCard('alvas', t.fields.alvas, 0, 8)
+  addCard('izgalom', t.fields.izgalom, 1, 5)
+  addCard('szorongas', t.fields.szorongas, 1, 5)
+  addCard('unalom', t.fields.unalom, 1, 5)
+  addCard('hangulat', t.fields.hangulat, 1, 5)
+  addCard('sovargas', t.fields.sovargas, 0, 5)
 
   const boredomPoints = dates.flatMap((date) => {
     const entry = entries[date]
@@ -122,7 +124,7 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
               days === option ? 'bg-sage text-white' : 'bg-sage-soft text-sage'
             }`}
           >
-            {option === 7 ? hu.review.days7 : hu.review.days30}
+            {option === 7 ? t.review.days7 : t.review.days30}
           </button>
         ))}
       </div>
@@ -139,8 +141,8 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
 
       {settings.enabledFields.unalom && settings.enabledFields.sovargas && (
         <div className="rounded-xl border border-line bg-card p-3">
-          <p className="text-sm font-medium">{hu.review.crossBoredom}</p>
-          <p className="mb-1 text-xs text-muted">{hu.review.crossCaption}</p>
+          <p className="text-sm font-medium">{t.review.crossBoredom}</p>
+          <p className="mb-1 text-xs text-muted">{t.review.crossCaption}</p>
           {boredomPoints.length >= 3 ? (
             <Scatter
               points={boredomPoints}
@@ -148,11 +150,11 @@ export default function ReviewPage({ entries, settings, onSettings }: Props) {
               xMax={5}
               yMin={0}
               yMax={5}
-              xLabel={hu.fields.unalom}
-              yLabel={hu.fields.sovargas}
+              xLabel={t.fields.unalom}
+              yLabel={t.fields.sovargas}
             />
           ) : (
-            <p className="text-xs text-muted">{hu.review.noPoints}</p>
+            <p className="text-xs text-muted">{t.review.noPoints}</p>
           )}
         </div>
       )}

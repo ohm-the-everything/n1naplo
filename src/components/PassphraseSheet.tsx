@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 
 type Props = {
   mode: 'create' | 'enter'
@@ -12,6 +12,7 @@ type Props = {
 const MIN_LENGTH = 8
 
 export default function PassphraseSheet({ mode, error, onSubmit, onPlain, onCancel }: Props) {
+  const t = useT()
   const [passphrase, setPassphrase] = useState('')
   const [repeat, setRepeat] = useState('')
   const [problem, setProblem] = useState<string | null>(null)
@@ -19,8 +20,8 @@ export default function PassphraseSheet({ mode, error, onSubmit, onPlain, onCanc
   const creating = mode === 'create'
 
   const submit = async () => {
-    if (creating && passphrase.length < MIN_LENGTH) return setProblem(hu.data.passphraseShort)
-    if (creating && passphrase !== repeat) return setProblem(hu.data.passphraseMismatch)
+    if (creating && passphrase.length < MIN_LENGTH) return setProblem(t.data.passphraseShort)
+    if (creating && passphrase !== repeat) return setProblem(t.data.passphraseMismatch)
     setProblem(null)
     setBusy(true)
     await onSubmit(passphrase)
@@ -39,18 +40,18 @@ export default function PassphraseSheet({ mode, error, onSubmit, onPlain, onCanc
         style={{ paddingBottom: 'calc(20px + var(--safe-area-bottom))' }}
       >
         <h2 id="passphrase-title" className="text-base font-semibold">
-          {creating ? hu.data.encryptTitle : hu.data.decryptTitle}
+          {creating ? t.data.encryptTitle : t.data.decryptTitle}
         </h2>
         <p className="mt-2 text-sm text-muted">
-          {creating ? hu.data.encryptBody : hu.data.decryptBody}
+          {creating ? t.data.encryptBody : t.data.decryptBody}
         </p>
         <input
           type="password"
           autoComplete={creating ? 'new-password' : 'current-password'}
           value={passphrase}
           onChange={(event) => setPassphrase(event.target.value)}
-          placeholder={hu.data.passphrase}
-          aria-label={hu.data.passphrase}
+          placeholder={t.data.passphrase}
+          aria-label={t.data.passphrase}
           className={input}
         />
         {creating && (
@@ -59,8 +60,8 @@ export default function PassphraseSheet({ mode, error, onSubmit, onPlain, onCanc
             autoComplete="new-password"
             value={repeat}
             onChange={(event) => setRepeat(event.target.value)}
-            placeholder={hu.data.passphraseRepeat}
-            aria-label={hu.data.passphraseRepeat}
+            placeholder={t.data.passphraseRepeat}
+            aria-label={t.data.passphraseRepeat}
             className={input}
           />
         )}
@@ -75,18 +76,18 @@ export default function PassphraseSheet({ mode, error, onSubmit, onPlain, onCanc
           onClick={() => void submit()}
           className="mt-4 w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-paper disabled:opacity-40"
         >
-          {creating ? hu.data.saveEncrypted : hu.data.decryptConfirm}
+          {creating ? t.data.saveEncrypted : t.data.decryptConfirm}
         </button>
         <button
           type="button"
           onClick={creating && onPlain ? onPlain : onCancel}
           className="mt-2 w-full rounded-xl border border-line px-4 py-3 text-[15px]"
         >
-          {creating ? hu.data.savePlain : hu.common.cancel}
+          {creating ? t.data.savePlain : t.common.cancel}
         </button>
         {creating && (
           <button type="button" onClick={onCancel} className="mt-1 w-full py-3 text-sm text-muted">
-            {hu.common.cancel}
+            {t.common.cancel}
           </button>
         )}
       </div>

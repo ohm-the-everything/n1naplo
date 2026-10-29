@@ -1,4 +1,4 @@
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 
 type Props = {
   title: string
@@ -10,6 +10,7 @@ type Props = {
 
 // Never window.confirm: it blocks the WebView and cannot be styled.
 export default function ConfirmSheet({ title, body, confirmLabel, onConfirm, onCancel }: Props) {
+  const t = useT()
   return (
     <div className="fixed inset-0 z-50 flex items-end bg-ink/30" role="presentation">
       <div
@@ -32,7 +33,7 @@ export default function ConfirmSheet({ title, body, confirmLabel, onConfirm, onC
             onClick={onCancel}
             className="flex-1 rounded-xl border border-line px-4 py-3 text-[15px]"
           >
-            {hu.common.cancel}
+            {t.common.cancel}
           </button>
           <button
             type="button"

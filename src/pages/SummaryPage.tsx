@@ -1,9 +1,9 @@
 import { useState } from 'react'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import { buildCsv } from '@/lib/csv'
 import { todayIso } from '@/lib/dates'
 import { shareFile } from '@/lib/files'
-import { labelWithUnit, medName } from '@/lib/meds'
+import { labelWithUnit, medNamer } from '@/lib/meds'
 import {
   buildSummary,
   type SummaryOptions,
@@ -18,26 +18,27 @@ type Props = {
   onBack: () => void
 }
 
-const RANGES: [SummaryRange, string][] = [
-  [14, hu.summary.days14],
-  [30, hu.summary.days30],
-  [90, hu.summary.days90],
-]
-
 export default function SummaryPage({ doc, onBack }: Props) {
+  const t = useT()
+  const medName = medNamer(t)
+  const RANGES: [SummaryRange, string][] = [
+    [14, t.summary.days14],
+    [30, t.summary.days30],
+    [90, t.summary.days90],
+  ]
   const [days, setDays] = useState<SummaryRange>(30)
   const [includeNotes, setIncludeNotes] = useState(false)
   const [includeCraving, setIncludeCraving] = useState(false)
   const options: SummaryOptions = { endDate: todayIso(), days, includeNotes, includeCraving }
   const summary = buildSummary(doc, options, medName)
-  const num = (value: number) => String(value).replace('.', hu.summary.decimal)
+  const num = (value: number) => String(value).replace('.', t.summary.decimal)
 
   const sharePdf = async () => {
     const [{ renderSummaryPdf }, { summaryFonts }] = await Promise.all([
       import('@/lib/summaryPdf'),
       import('@/lib/fonts'),
     ])
-    const bytes = await renderSummaryPdf(summary, hu, summaryFonts())
+    const bytes = await renderSummaryPdf(summary, t, summaryFonts())
     await shareFile(`n1naplo-osszefoglalo-${options.endDate}.pdf`, bytes, 'application/pdf')
   }
   const shareCsv = () =>
@@ -52,9 +53,9 @@ export default function SummaryPage({ doc, onBack }: Props) {
   return (
     <div className="flex flex-col gap-3">
       <button type="button" onClick={onBack} className="self-start text-sm font-medium text-sage">
-        ← {hu.summary.back}
+        ← {t.summary.back}
       </button>
-      <h1 className="text-lg font-semibold">{hu.summary.title}</h1>
+      <h1 className="text-lg font-semibold">{t.summary.title}</h1>
       <div className="flex flex-wrap gap-2">
         {RANGES.map(([range, label]) => (
           <button
@@ -72,7 +73,7 @@ export default function SummaryPage({ doc, onBack }: Props) {
           className={chip(includeNotes)}
           aria-pressed={includeNotes}
         >
-          {hu.summary.includeNotes}
+          {t.summary.includeNotes}
         </button>
         <button
           type="button"
@@ -80,37 +81,37 @@ export default function SummaryPage({ doc, onBack }: Props) {
           className={chip(includeCraving)}
           aria-pressed={includeCraving}
         >
-          {hu.summary.includeCraving}
+          {t.summary.includeCraving}
         </button>
       </div>
 
       <section className="rounded-xl border border-line bg-card p-4 text-sm">
         <p className="text-muted">
-          {summary.from} – {summary.to} · {hu.summary.disclaimer}
+          {summary.from} – {summary.to} · {t.summary.disclaimer}
         </p>
         <p className="mt-2">
-          {fill(hu.summary.days, {
+          {fill(t.summary.days, {
             total: days,
             recorded: summary.daysRecorded,
             missing: summary.daysMissing,
           })}
         </p>
-        {summary.daysRecorded === 0 && <p className="mt-2 text-muted">{hu.summary.empty}</p>}
+        {summary.daysRecorded === 0 && <p className="mt-2 text-muted">{t.summary.empty}</p>}
         {summary.fields.length > 0 && (
           <table className="mt-3 w-full text-left tabular-nums">
             <thead>
               <tr className="text-xs text-muted">
-                <th className="font-medium">{hu.summary.colField}</th>
-                <th className="font-medium">{hu.summary.colDays}</th>
-                <th className="font-medium">{hu.summary.colMin}</th>
-                <th className="font-medium">{hu.summary.colMedian}</th>
-                <th className="font-medium">{hu.summary.colMax}</th>
+                <th className="font-medium">{t.summary.colField}</th>
+                <th className="font-medium">{t.summary.colDays}</th>
+                <th className="font-medium">{t.summary.colMin}</th>
+                <th className="font-medium">{t.summary.colMedian}</th>
+                <th className="font-medium">{t.summary.colMax}</th>
               </tr>
             </thead>
             <tbody>
               {summary.fields.map((f) => (
                 <tr key={f.key}>
-                  <td>{hu.fields[f.key]}</td>
+                  <td>{t.fields[f.key]}</td>
                   <td>{f.recorded}</td>
                   <td>{num(f.min)}</td>
                   <td>{num(f.median)}</td>
@@ -128,7 +129,7 @@ export default function SummaryPage({ doc, onBack }: Props) {
         ))}
         {summary.openTopics.length > 0 && (
           <>
-            <h2 className="mt-3 font-medium">{hu.summary.topicsTitle}</h2>
+            <h2 className="mt-3 font-medium">{t.summary.topicsTitle}</h2>
             <ul className="list-disc pl-5">
               {summary.openTopics.map((topic) => (
                 <li key={topic}>{topic}</li>
@@ -138,7 +139,7 @@ export default function SummaryPage({ doc, onBack }: Props) {
         )}
         {summary.notes.length > 0 && (
           <>
-            <h2 className="mt-3 font-medium">{hu.summary.notesTitle}</h2>
+            <h2 className="mt-3 font-medium">{t.summary.notesTitle}</h2>
             {summary.notes.map((note) => (
               <p key={note.date} className="mt-1">
                 <span className="text-muted">{note.date}</span> {note.text}
@@ -153,16 +154,16 @@ export default function SummaryPage({ doc, onBack }: Props) {
         onClick={() => void sharePdf()}
         className="rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
       >
-        {hu.summary.sharePdf}
+        {t.summary.sharePdf}
       </button>
       <button
         type="button"
         onClick={() => void shareCsv()}
         className="rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
       >
-        {hu.summary.shareCsv}
+        {t.summary.shareCsv}
       </button>
-      <p className="text-xs text-muted">{hu.summary.plain}</p>
+      <p className="text-xs text-muted">{t.summary.plain}</p>
     </div>
   )
 }

@@ -1,6 +1,7 @@
 // House voice: dry, warm, no pressure.
 export const hu = {
   appName: 'N1 Napló',
+  dateLocale: 'hu-HU',
   tabs: {
     entry: 'Napló',
     review: 'Visszanézés',
@@ -62,6 +63,10 @@ export const hu = {
     medsHint:
       'A címkék a te leleted szerint — nincs beégetett gyógyszernév. A kikapcsolt mező adata megmarad, és az exportban is benne lesz.',
     fieldsSection: 'Mezők',
+    language: 'Nyelv',
+    languageAuto: 'Automatikus',
+    languageHu: 'Magyar',
+    languageEn: 'English',
     privacy:
       'Az app nem kér internet-hozzáférést — nincs analitika, nincs fiók, nincs felhő. A napló csak akkor hagyja el a telefont, ha te kéred.',
   },
@@ -189,8 +194,10 @@ export const hu = {
     title: 'Segítség',
     nobody: 'A naplót senki nem figyeli — ha bajban vagy, hívj valakit.',
     emergency: 'Általános segélyhívó',
+    supportNumber: '116-123',
     support:
       'Lelki elsősegély — Magyar Lelki Elsősegély Telefonszolgálatok Szövetsége (LESZ). Ingyenes, éjjel-nappal.',
+    abroad: 'Külföldön a helyi segélyhívót hívd.',
     checked: 'Ellenőrizve: 2026-10-28',
     notMedical:
       'Az N1 Napló nem orvostechnikai eszköz: nem diagnosztizál, nem kezel, nem ad tanácsot az adagról. Kérdéseiddel fordulj az orvosodhoz.',

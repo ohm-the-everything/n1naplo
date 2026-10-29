@@ -6,13 +6,13 @@ import BackupChoice from '@/components/BackupChoice'
 import PassphraseSheet from '@/components/PassphraseSheet'
 import RestoreFromFile from '@/components/RestoreFromFile'
 import Toggle from '@/components/Toggle'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import { backupFileName, serializeBackup } from '@/lib/backup'
 import { encryptBackup } from '@/lib/crypto'
 import { todayIso } from '@/lib/dates'
 import { medHasValues } from '@/lib/document'
 import { shareFile } from '@/lib/files'
-import { medName } from '@/lib/meds'
+import { medNamer } from '@/lib/meds'
 import { allowExactReminders, type ReminderStatus } from '@/lib/reminder'
 import { ALL_FIELDS, type Med, type N1Document, type Settings } from '@/types'
 
@@ -37,6 +37,8 @@ export default function SettingsPage({
   settings,
   onSettings,
 }: Props) {
+  const t = useT()
+  const medName = medNamer(t)
   const [saving, setSaving] = useState(false)
   const changeMed = (index: number, changes: Partial<Med>) => {
     const meds = settings.meds.map((med, i) => (i === index ? { ...med, ...changes } : med))
@@ -68,28 +70,28 @@ export default function SettingsPage({
           className="flex w-full items-center justify-center gap-2 rounded-full bg-sage py-3 font-medium text-white"
         >
           <FileText size={18} />
-          {hu.summary.title}
+          {t.summary.title}
         </button>
-        <p className="mt-2 text-xs text-muted">{hu.settings.summaryHint}</p>
+        <p className="mt-2 text-xs text-muted">{t.settings.summaryHint}</p>
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
         <div className="flex items-center gap-3">
           <div className="flex-1">
-            <h2 className="text-sm font-semibold">{hu.settings.reminderLabel}</h2>
-            <p className="text-xs text-muted">{hu.settings.reminderHint}</p>
+            <h2 className="text-sm font-semibold">{t.settings.reminderLabel}</h2>
+            <p className="text-xs text-muted">{t.settings.reminderHint}</p>
           </div>
           <Toggle
             checked={settings.reminderEnabled}
             onChange={(on) =>
               onSettings({ ...settings, reminderEnabled: on }, { resyncReminder: true })
             }
-            label={hu.settings.reminderLabel}
+            label={t.settings.reminderLabel}
           />
         </div>
         {settings.reminderEnabled && (
           <label className="mt-3 flex items-center justify-between text-sm">
-            {hu.settings.reminderTime}
+            {t.settings.reminderTime}
             <input
               type="time"
               value={`${pad(settings.reminderHour)}:${pad(settings.reminderMinute)}`}
@@ -107,11 +109,11 @@ export default function SettingsPage({
           </label>
         )}
         {settings.reminderEnabled && reminderStatus === 'denied' && (
-          <p className="mt-2 text-sm">{hu.settings.reminderDenied}</p>
+          <p className="mt-2 text-sm">{t.settings.reminderDenied}</p>
         )}
         {settings.reminderEnabled && reminderStatus === 'scheduled-inexact' && (
           <div className="mt-2 text-sm">
-            <p>{hu.settings.reminderInexact}</p>
+            <p>{t.settings.reminderInexact}</p>
             <button
               type="button"
               onClick={() =>
@@ -121,14 +123,39 @@ export default function SettingsPage({
               }
               className="mt-1 font-medium text-sage underline"
             >
-              {hu.settings.reminderExact}
+              {t.settings.reminderExact}
             </button>
           </div>
         )}
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.settings.medsSection}</h2>
+        <h2 className="text-sm font-semibold">{t.settings.language}</h2>
+        <div className="mt-3 flex gap-2">
+          {(
+            [
+              ['auto', t.settings.languageAuto],
+              ['hu', t.settings.languageHu],
+              ['en', t.settings.languageEn],
+            ] as const
+          ).map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              aria-pressed={settings.locale === value}
+              onClick={() => onSettings({ ...settings, locale: value })}
+              className={`rounded-full px-4 py-1.5 text-sm ${
+                settings.locale === value ? 'bg-sage text-white' : 'bg-sage-soft text-sage'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      <section className="rounded-xl border border-line bg-card p-4">
+        <h2 className="text-sm font-semibold">{t.settings.medsSection}</h2>
         {settings.meds.map((med, index) => {
           const unitLocked = medHasValues(doc, med.id)
           return (
@@ -151,11 +178,11 @@ export default function SettingsPage({
                 value={med.unit}
                 readOnly={unitLocked}
                 onChange={(event) => changeMed(index, { unit: event.target.value })}
-                placeholder={hu.settings.unitPlaceholder}
-                aria-label={`${medName(med, index)}: ${hu.settings.unitPlaceholder}`}
+                placeholder={t.settings.unitPlaceholder}
+                aria-label={`${medName(med, index)}: ${t.settings.unitPlaceholder}`}
                 className="mt-1.5 w-full rounded-lg border border-line bg-paper px-3 py-1.5 text-sm read-only:text-muted focus:border-sage focus:outline-none"
               />
-              {unitLocked && <p className="mt-1 text-xs text-muted">{hu.settings.unitLocked}</p>}
+              {unitLocked && <p className="mt-1 text-xs text-muted">{t.settings.unitLocked}</p>}
             </div>
           )
         })}
@@ -165,20 +192,20 @@ export default function SettingsPage({
           className="mt-3 flex items-center gap-1.5 text-sm font-medium text-sage"
         >
           <Plus size={16} />
-          {hu.settings.addMed}
+          {t.settings.addMed}
         </button>
-        <p className="mt-2 text-xs text-muted">{hu.settings.medsHint}</p>
+        <p className="mt-2 text-xs text-muted">{t.settings.medsHint}</p>
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.settings.fieldsSection}</h2>
+        <h2 className="text-sm font-semibold">{t.settings.fieldsSection}</h2>
         <div className="mt-1">
           {ALL_FIELDS.map((key) => (
             <div
               key={key}
               className="flex items-center justify-between border-b border-line py-2.5 last:border-b-0"
             >
-              <span className="text-sm">{hu.fields[key]}</span>
+              <span className="text-sm">{t.fields[key]}</span>
               <Toggle
                 checked={settings.enabledFields[key]}
                 onChange={(on) =>
@@ -187,7 +214,7 @@ export default function SettingsPage({
                     enabledFields: { ...settings.enabledFields, [key]: on },
                   })
                 }
-                label={hu.fields[key]}
+                label={t.fields[key]}
               />
             </div>
           ))}
@@ -195,16 +222,16 @@ export default function SettingsPage({
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.data.section}</h2>
-        <p className="mt-1 text-sm text-muted">{hu.data.hint}</p>
+        <h2 className="text-sm font-semibold">{t.data.section}</h2>
+        <p className="mt-1 text-sm text-muted">{t.data.hint}</p>
         <button
           type="button"
           onClick={() => setSaving(true)}
           className="mt-3 w-full rounded-xl bg-sage px-4 py-3 text-[15px] font-medium text-white"
         >
-          {hu.data.save}
+          {t.data.save}
         </button>
-        <RestoreFromFile current={doc} label={hu.data.restore} onApply={onDocument} />
+        <RestoreFromFile current={doc} label={t.data.restore} onApply={onDocument} />
         {saving && (
           <PassphraseSheet
             mode="create"
@@ -218,31 +245,31 @@ export default function SettingsPage({
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.backup.section}</h2>
-        <p className="mt-1 text-sm text-muted">{hu.backup.intro}</p>
+        <h2 className="text-sm font-semibold">{t.backup.section}</h2>
+        <p className="mt-1 text-sm text-muted">{t.backup.intro}</p>
         <BackupChoice
           value={settings.backup}
           onChange={(backup) => onSettings({ ...settings, backup })}
         />
-        <p className="mt-3 text-sm text-muted">{hu.backup.off}</p>
+        <p className="mt-3 text-sm text-muted">{t.backup.off}</p>
       </section>
 
       <section className="rounded-xl border border-line bg-card p-4">
-        <h2 className="text-sm font-semibold">{hu.protection.section}</h2>
+        <h2 className="text-sm font-semibold">{t.protection.section}</h2>
         <div className="mt-3 flex items-center justify-between gap-3">
-          <span className="text-[15px] font-medium">{hu.protection.screenshotsTitle}</span>
+          <span className="text-[15px] font-medium">{t.protection.screenshotsTitle}</span>
           <Toggle
             checked={settings.protection.allowScreenshots}
             onChange={(allowScreenshots) =>
               onSettings({ ...settings, protection: { ...settings.protection, allowScreenshots } })
             }
-            label={hu.protection.screenshotsTitle}
+            label={t.protection.screenshotsTitle}
           />
         </div>
-        <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsHow}</p>
-        <p className="mt-1 text-sm">{hu.protection.screenshotsRisk}</p>
+        <p className="mt-1 text-sm text-muted">{t.protection.screenshotsHow}</p>
+        <p className="mt-1 text-sm">{t.protection.screenshotsRisk}</p>
         {settings.protection.appLock && settings.protection.allowScreenshots && (
-          <p className="mt-1 text-sm text-muted">{hu.protection.screenshotsLocked}</p>
+          <p className="mt-1 text-sm text-muted">{t.protection.screenshotsLocked}</p>
         )}
         <AppLockChoice
           value={settings.protection.appLock}
@@ -257,11 +284,11 @@ export default function SettingsPage({
         onClick={onOpenHelp}
         className="rounded-xl border border-line bg-card p-4 text-left text-[15px] font-medium"
       >
-        {hu.help.title}
+        {t.help.title}
       </button>
       <About />
 
-      <p className="px-2 text-center text-xs text-muted">{hu.settings.privacy}</p>
+      <p className="px-2 text-center text-xs text-muted">{t.settings.privacy}</p>
     </div>
   )
 }

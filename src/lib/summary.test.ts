@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest'
+import { hu } from '@/i18n/hu'
 import type { DayEntry, N1Document } from '@/types'
 import { addDays } from './dates'
 import { emptyDocument, withEntry, withSettings, withTopics } from './document'
-import { medName } from './meds'
+import { medNamer } from './meds'
 import { buildSummary, summaryDocument } from './summary'
 
+const medName = medNamer(hu)
 const END = '2026-10-28'
 const base = { endDate: END, days: 14 as const, includeNotes: true, includeCraving: true }
 

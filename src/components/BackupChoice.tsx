@@ -1,6 +1,6 @@
 import { Capacitor } from '@capacitor/core'
 import Toggle from '@/components/Toggle'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 import type { BackupChoice as Choice } from '@/types'
 
 type Props = {
@@ -10,13 +10,14 @@ type Props = {
 
 // One switch on iOS: iCloud backup and migration are the same mechanism there.
 export default function BackupChoice({ value, onChange }: Props) {
+  const t = useT()
   if (Capacitor.getPlatform() === 'ios') {
     const on = value.cloud || value.transfer
     return (
       <Option
-        title={hu.backup.iosTitle}
-        how={hu.backup.iosHow}
-        risk={hu.backup.iosRisk}
+        title={t.backup.iosTitle}
+        how={t.backup.iosHow}
+        risk={t.backup.iosRisk}
         checked={on}
         onChange={(next) => onChange({ cloud: next, transfer: next })}
       />
@@ -25,16 +26,16 @@ export default function BackupChoice({ value, onChange }: Props) {
   return (
     <>
       <Option
-        title={hu.backup.cloudTitle}
-        how={hu.backup.cloudHow}
-        risk={hu.backup.cloudRisk}
+        title={t.backup.cloudTitle}
+        how={t.backup.cloudHow}
+        risk={t.backup.cloudRisk}
         checked={value.cloud}
         onChange={(cloud) => onChange({ ...value, cloud })}
       />
       <Option
-        title={hu.backup.transferTitle}
-        how={hu.backup.transferHow}
-        risk={hu.backup.transferRisk}
+        title={t.backup.transferTitle}
+        how={t.backup.transferHow}
+        risk={t.backup.transferRisk}
         checked={value.transfer}
         onChange={(transfer) => onChange({ ...value, transfer })}
       />

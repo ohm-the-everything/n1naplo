@@ -1,5 +1,5 @@
 import { X } from 'lucide-react'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 
 type Props = {
   label: string
@@ -14,6 +14,7 @@ type Props = {
 const round = (value: number) => Math.round(value * 10) / 10
 
 export default function Stepper({ label, hint, value, min, max, step, onChange }: Props) {
+  const t = useT()
   const decrease = () => {
     if (value !== undefined && value > min) onChange(round(Math.max(min, value - step)))
   }
@@ -30,7 +31,7 @@ export default function Stepper({ label, hint, value, min, max, step, onChange }
       {value !== undefined && (
         <button
           type="button"
-          aria-label={hu.entry.clear}
+          aria-label={t.entry.clear}
           onClick={() => onChange(undefined)}
           className="p-2 text-muted"
         >

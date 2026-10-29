@@ -1,0 +1,238 @@
+import type { Messages } from './index'
+
+export const en: Messages = {
+  appName: 'N1 Napló',
+  dateLocale: 'en-GB',
+  tabs: {
+    entry: 'Diary',
+    review: 'Review',
+    settings: 'Settings',
+  },
+  entry: {
+    prevDay: 'Previous day',
+    nextDay: 'Next day',
+    backToToday: 'Back to today',
+    clear: 'Clear',
+    notePlaceholder: 'A short note, if any…',
+    footer: 'Saved as you type. A skipped field is not a failure, just a data gap.',
+  },
+  topics: {
+    title: 'For your next appointment',
+    placeholder: 'Something you don’t want to forget…',
+    add: 'Add topic',
+    toSummary: 'Summary for your appointment →',
+    done: 'Discussed',
+    remove: 'Remove',
+    empty: 'Whatever comes up between appointments, write it here — you’d forget it there anyway.',
+  },
+  fields: {
+    alvas: 'Sleep (hours)',
+    izgalom: 'Restlessness',
+    szorongas: 'Anxiety',
+    unalom: 'Boredom',
+    hangulat: 'Mood',
+    sovargas: 'Craving',
+    jegyzet: 'Note',
+    sovargasHint: 'A strong urge for something — you decide what.',
+  },
+  review: {
+    empty: 'No data yet. Not a failure, a beginning.',
+    gateTitle: 'You already looked back this week.',
+    gateBody:
+      'Patterns show up week by week; looking every day mostly shows noise. But it’s your diary: your call.',
+    gateOpen: 'Show me now',
+    days7: '7 days',
+    days30: '30 days',
+    crossBoredom: 'Boredom and craving together',
+    crossCaption: 'An observation, not a cause.',
+    noPoints: 'Too few points for this yet. They’ll come.',
+  },
+  settings: {
+    summaryHint: 'The last 14, 30 or 90 days in one place — as a PDF or CSV, for your doctor.',
+    reminderLabel: 'Evening reminder',
+    reminderHint: 'I’ll nudge you in the evening. No pressure.',
+    reminderTime: 'Time',
+    reminderDenied:
+      'Your phone doesn’t let N1 Napló show notifications right now. You can allow it in the phone’s settings: Notifications › N1 Napló.',
+    reminderInexact: 'The reminder may come a few minutes late.',
+    reminderExact: 'Allow exact timing',
+    medsSection: 'Medication fields',
+    medFallback: 'Medication',
+    unitPlaceholder: 'e.g. 10 mg tablet',
+    unitLocked: 'For another unit add a new field, so past entries keep their meaning.',
+    addMed: 'New medication field',
+    medsHint:
+      'Labels follow your prescription — no drug names built in. A disabled field keeps its data, and the export still includes it.',
+    fieldsSection: 'Fields',
+    language: 'Language',
+    languageAuto: 'Automatic',
+    languageHu: 'Magyar',
+    languageEn: 'English',
+    privacy:
+      'The app has no internet access — no analytics, no account, no cloud. Your diary leaves the phone only when you ask.',
+  },
+  backup: {
+    section: 'Backup copy',
+    intro:
+      'By default the diary lives only on this phone: if the phone is lost or broken, so is the diary. You can ask for a copy in the system backup — or not. You can change this any time.',
+    cloudTitle: 'Copy in your Google account',
+    cloudHow:
+      'About once a day, while the phone is idle, Android saves a copy of the diary to a private folder in your Google account and restores it on a new phone or after reinstalling. It only does so if you have a screen lock: that encrypts the copy, so not even Google can read it.',
+    cloudRisk:
+      'The risk: the diary is health data (medication, mood, craving) and it leaves the phone. Anyone who knows your Google password and your screen lock could restore it on another phone. Turning this off deletes the copy from the phone at once; Android replaces the old backup with the next one, or you can delete it from your Google account’s backups.',
+    transferTitle: 'Move to a new phone',
+    transferHow:
+      'When you set up a new Android phone, the diary moves over directly from the old one — by cable or wirelessly, without the cloud.',
+    transferRisk:
+      'The risk: anyone with your unlocked phone could copy the diary to another phone.',
+    iosTitle: 'Copy in your iPhone backup',
+    iosHow:
+      'The diary goes into your iPhone backup (iCloud or a computer) and comes along when you move to a new iPhone.',
+    iosRisk:
+      'The risk: the diary is health data and it leaves the phone. Apple encrypts iCloud backups, but keeps the key unless you turned on Advanced Data Protection. Anyone who signs in to your Apple account could restore it on another iPhone.',
+    off: 'If you leave this off, the diary exists only on this phone.',
+  },
+  data: {
+    section: 'Backup and restore',
+    hint: 'The whole diary in one file. You decide where it goes — and everything comes back from it.',
+    save: 'Save to a file',
+    restore: 'Restore or import a CSV',
+    restoreTitle: 'Restore this backup?',
+    restoreBody:
+      'The backup ({after} days) replaces your current diary ({before} days). This can’t be undone — if you need the current one, save it to a file first.',
+    restoreConfirm: 'Yes, restore',
+    importTitle: 'Import this CSV?',
+    importBody:
+      'I’ll write {days} days from the file (replacing what’s there) and add {meds} new medication fields. Other days stay as they are.',
+    importConfirm: 'Yes, import',
+    notN1: 'This isn’t an N1 Napló backup or export.',
+    newer: 'A newer N1 Napló made this backup. Update the app and try again.',
+    invalid: 'The file contains invalid data, so I changed nothing.',
+    encryptTitle: 'A passphrase for the backup',
+    encryptBody:
+      'The backup is your whole diary. Anyone with access to the file — through a shared folder, email or an assistant that can see them — can read it. With a passphrase, only someone who knows it can. If you forget it, nobody can open the backup, not even us.',
+    passphrase: 'Passphrase (at least 8 characters)',
+    passphraseRepeat: 'Passphrase again',
+    passphraseShort: 'At least 8 characters, please.',
+    passphraseMismatch: 'The two passphrases don’t match.',
+    saveEncrypted: 'Save encrypted',
+    savePlain: 'Without a passphrase',
+    decryptTitle: 'Encrypted backup',
+    decryptBody: 'Enter the passphrase you used for this backup.',
+    decryptConfirm: 'Open',
+    wrongPassphrase: 'Wrong passphrase, or the file is damaged.',
+  },
+  protection: {
+    section: 'Protection on this phone',
+    screenshotsTitle: 'Allow screenshots',
+    screenshotsHow:
+      'Blocked by default: the diary stays out of screenshots and screen recordings, and the app switcher doesn’t show it. From Android 14, apps that read the screen can’t see it either — the TalkBack screen reader still can.',
+    screenshotsLocked: 'While the app lock is on, screenshots stay blocked.',
+    screenshotsRisk:
+      'If you allow them, a screenshot goes to your gallery, and from there anywhere: the cloud, a chat, an assistant. For your doctor, the summary is the better route.',
+  },
+  lock: {
+    title: 'The diary is locked.',
+    unlock: 'Unlock',
+    reason: 'To open your diary',
+    choiceTitle: 'App lock',
+    choiceHow:
+      'When you open the app, and when it has been in the background for more than a minute, it asks for your phone’s own lock (face, fingerprint or code). Someone holding your unlocked phone can’t reach the diary without your code.',
+    noDeviceLock: 'This needs a screen lock on the phone (code, pattern, fingerprint or face).',
+    turnOn: 'Turn on app lock',
+    turnOff: 'Turn off app lock',
+  },
+  summary: {
+    title: 'Summary for your appointment',
+    disclaimer: 'Self-reported observations, no recommendations.',
+    generated: 'Made on {date}',
+    days: '{recorded} of {total} days recorded, {missing} days missing.',
+    medsTitle: 'Medication by day',
+    medsLegend: '· = no data',
+    fieldsTitle: 'Fields',
+    colField: 'Field',
+    colDays: 'Days',
+    colMin: 'Min',
+    colMedian: 'Median',
+    colMax: 'Max',
+    topicsTitle: 'Topics for this appointment',
+    notesTitle: 'Notes',
+    site: 'n1naplo.org',
+    decimal: '.',
+    days14: '14 days',
+    days30: '30 days',
+    days90: '90 days',
+    includeNotes: 'With notes',
+    includeCraving: 'With craving',
+    sharePdf: 'Share PDF',
+    shareCsv: 'Share CSV',
+    back: 'Back',
+    plain:
+      'The PDF and the CSV are not encrypted — they’re meant for your doctor. Send them only where you mean to.',
+    empty: 'No data in this period. Not a failure, a data gap.',
+  },
+  onboarding: {
+    step: '{n}/{total}',
+    next: 'Next',
+    back: 'Back',
+    whatTitle: 'One row a day. That’s it.',
+    whatBody:
+      'Medication, sleep, restlessness, anxiety, boredom, mood, craving, a short note — twenty seconds a day. Over weeks a picture forms that you can take to your next appointment.',
+    notTitle: 'What it isn’t',
+    notBody:
+      'Not a medical device: it doesn’t diagnose, treat or advise on doses. Nobody monitors this diary. If you’re in trouble, you’ll find numbers under Settings › Help.',
+    dataTitle: 'Your data',
+    dataBody:
+      'The diary lives on this phone. The app has no internet permission, so it can’t send anything. Screenshots are blocked by default. You make backups yourself, to a file, whenever you like.',
+    backupTitle: 'A copy in the system backup?',
+    lockTitle: 'App lock',
+    reminderTitle: 'Evening reminder',
+    reminderBody:
+      'I can nudge you at 21:00, if you’d like. Filling it in is possible, never required — a skipped day is a data gap, not a failure. You can change the time later.',
+    reminderYes: 'Remind me in the evening (21:00)',
+    reminderNo: 'Not now',
+  },
+  help: {
+    title: 'Help',
+    nobody: 'Nobody monitors this diary — if you are in trouble, call someone.',
+    emergency: 'Emergency number in the EU',
+    supportNumber: '116 123',
+    support: 'Emotional support line, available in several EU countries.',
+    abroad: 'Outside the EU, call your local emergency number.',
+    checked: 'Checked on 2026-10-28',
+    notMedical:
+      'N1 Napló is not a medical device: it doesn’t diagnose, treat or advise on doses. Take your questions to your doctor.',
+  },
+  about: {
+    section: 'About',
+    version: 'Version {version}',
+    license: 'Open source, MIT licence.',
+    source: 'Source code',
+    site: 'Website',
+    privacyLink: 'Privacy policy',
+    publisher: 'Published by OHM Corp Kft.',
+    privacy:
+      'The app has no internet access and collects or sends no data. Your diary lives on your phone: it leaves only when you save it out, or when you ask for a copy in the system backup.',
+  },
+  common: {
+    cancel: 'Cancel',
+  },
+  store: {
+    saveFailed: 'Your last change couldn’t be saved.',
+    retry: 'Retry',
+    loadFailed: 'The diary couldn’t be opened just now. Nothing is lost.',
+  },
+  recovery: {
+    title: 'The diary file is damaged.',
+    body: 'I didn’t overwrite anything: the damaged file was copied aside and stays on the phone. You can start with an empty diary now.',
+    startEmpty: 'Start with an empty diary',
+    restore: 'Restore from a backup',
+    confirmTitle: 'Start with an empty diary?',
+    confirmBody: 'The copy of the damaged file stays on the phone. The diary starts empty.',
+    confirmLabel: 'Yes, start empty',
+  },
+  reminder: {
+    title: 'N1 Napló',
+    body: 'If you feel like it, one row about today. If not, that’s data too.',
+  },
+}

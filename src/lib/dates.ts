@@ -24,13 +24,18 @@ export function daysBetween(fromIso: string, untilIso: string): number {
   return Math.round((parseIso(untilIso).getTime() - parseIso(fromIso).getTime()) / 86_400_000)
 }
 
-const huFormat = new Intl.DateTimeFormat('hu-HU', {
-  year: 'numeric',
-  month: 'long',
-  day: 'numeric',
-  weekday: 'long',
-})
+const formats = new Map<string, Intl.DateTimeFormat>()
 
-export function formatHu(iso: string): string {
-  return huFormat.format(parseIso(iso))
+export function formatDate(iso: string, locale: string): string {
+  let format = formats.get(locale)
+  if (!format) {
+    format = new Intl.DateTimeFormat(locale, {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      weekday: 'long',
+    })
+    formats.set(locale, format)
+  }
+  return format.format(parseIso(iso))
 }

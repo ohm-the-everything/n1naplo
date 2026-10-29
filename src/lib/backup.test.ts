@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest'
+import { hu } from '@/i18n/hu'
 import type { N1Document } from '@/types'
 import {
   applyRestore,
@@ -9,7 +10,9 @@ import {
   serializeBackup,
 } from './backup'
 import { emptyDocument, withEntry, withSettings } from './document'
-import { medName } from './meds'
+import { medNamer } from './meds'
+
+const medName = medNamer(hu)
 
 function diary(): N1Document {
   let doc = emptyDocument()

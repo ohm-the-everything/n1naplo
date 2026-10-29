@@ -1,8 +1,8 @@
 import { App as CapApp } from '@capacitor/app'
 import { Capacitor } from '@capacitor/core'
-import { useEffect, useRef, useState } from 'react'
+import { type ReactNode, useEffect, useRef, useState } from 'react'
 import TabBar, { type Tab } from '@/components/TabBar'
-import { hu } from '@/i18n/hu'
+import { I18nProvider, messages, pickLocale } from '@/i18n'
 import { emptyDocument, withEntry, withSettings, withTopics } from '@/lib/document'
 import { needsUnlock } from '@/lib/lock'
 import { applyScreenProtection } from '@/lib/protection'
@@ -22,6 +22,9 @@ type LoadState = 'loading' | 'ready' | 'corrupt' | 'failed'
 
 // Single writer for the whole app.
 const save = createSaver()
+
+const messagesFor = (settings: Settings) =>
+  messages[pickLocale(settings.locale, navigator.languages)]
 
 export default function App() {
   const [tab, setTab] = useState<Tab>('entry')
@@ -43,7 +46,7 @@ export default function App() {
         setDoc(loaded)
         setLocked(loaded.settings.protection.appLock)
         setLoadState('ready')
-        void syncReminder(loaded.settings, hu).then(setReminderStatus)
+        void syncReminder(loaded.settings, messagesFor(loaded.settings)).then(setReminderStatus)
       },
       (error: unknown) => setLoadState(error instanceof StoreCorruptError ? 'corrupt' : 'failed'),
     )
@@ -58,7 +61,9 @@ export default function App() {
   useEffect(() => {
     if (!Capacitor.isNativePlatform()) return
     const resumed = CapApp.addListener('resume', () => {
-      void syncReminder(latest.current.settings, hu).then(setReminderStatus)
+      void syncReminder(latest.current.settings, messagesFor(latest.current.settings)).then(
+        setReminderStatus,
+      )
       if (needsUnlock(latest.current.settings.protection.appLock, hiddenAt.current, Date.now())) {
         setLocked(true)
       }
@@ -85,12 +90,19 @@ export default function App() {
 
   const replaceDocument = (next: N1Document) => {
     commit(next)
-    void syncReminder(next.settings, hu).then(setReminderStatus)
+    void syncReminder(next.settings, messagesFor(next.settings)).then(setReminderStatus)
   }
+
+  const locale = pickLocale(doc.settings.locale, navigator.languages)
+  const t = messages[locale]
+  useEffect(() => {
+    document.documentElement.lang = locale
+  }, [locale])
+  const ui = (node: ReactNode) => <I18nProvider locale={locale}>{node}</I18nProvider>
 
   if (loadState === 'loading') return null
   if (loadState === 'corrupt') {
-    return (
+    return ui(
       <RecoveryPage
         onStartEmpty={() => {
           commit(emptyDocument())
@@ -100,26 +112,26 @@ export default function App() {
           replaceDocument(restored)
           setLoadState('ready')
         }}
-      />
+      />,
     )
   }
-  if (locked) return <LockScreen onUnlocked={() => setLocked(false)} />
+  if (locked) return ui(<LockScreen onUnlocked={() => setLocked(false)} />)
   if (concealed) return null
   if (loadState === 'failed') {
-    return (
+    return ui(
       <div
         className="mx-auto w-full max-w-md px-5"
         style={{ paddingTop: 'calc(48px + var(--safe-area-top))' }}
       >
-        <p className="text-[15px]">{hu.store.loadFailed}</p>
+        <p className="text-[15px]">{t.store.loadFailed}</p>
         <button
           type="button"
           onClick={() => window.location.reload()}
           className="mt-4 rounded-xl border border-line bg-card px-4 py-3 text-[15px]"
         >
-          {hu.store.retry}
+          {t.store.retry}
         </button>
-      </div>
+      </div>,
     )
   }
 
@@ -129,32 +141,32 @@ export default function App() {
     commit(withSettings(latest.current, settings))
     if (!options?.resyncReminder) return
     const allowed = settings.reminderEnabled ? requestReminderPermission() : Promise.resolve(false)
-    void allowed.then(() => syncReminder(settings, hu)).then(setReminderStatus)
+    void allowed.then(() => syncReminder(settings, messagesFor(settings))).then(setReminderStatus)
   }
 
   if (doc.settings.onboardedAt === null) {
-    return (
+    return ui(
       <OnboardingPage
         settings={doc.settings}
         onDone={(settings) => changeSettings(settings, { resyncReminder: true })}
-      />
+      />,
     )
   }
 
-  return (
+  return ui(
     <div style={{ paddingTop: 'var(--safe-area-top)' }}>
       {saveFailed && (
         <div
           role="alert"
           className="flex items-center justify-between gap-3 bg-sage-soft px-5 py-2 text-sm"
         >
-          <span>{hu.store.saveFailed}</span>
+          <span>{t.store.saveFailed}</span>
           <button
             type="button"
             onClick={() => commit(latest.current)}
             className="font-medium underline"
           >
-            {hu.store.retry}
+            {t.store.retry}
           </button>
         </div>
       )}
@@ -195,6 +207,6 @@ export default function App() {
           setTab(next)
         }}
       />
-    </div>
+    </div>,
   )
 }

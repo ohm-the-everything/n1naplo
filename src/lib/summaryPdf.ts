@@ -1,12 +1,11 @@
 import fontkit from '@pdf-lib/fontkit'
 import { PDFDocument, type PDFFont, type PDFPage, rgb } from 'pdf-lib'
-import type { hu } from '@/i18n/hu'
+import type { Messages } from '@/i18n'
 import { addDays } from '@/lib/dates'
 import { labelWithUnit } from '@/lib/meds'
 import type { Summary } from '@/lib/summary'
 import { fill } from '@/lib/text'
 
-type Messages = typeof hu
 type Fonts = { regular: Uint8Array; bold: Uint8Array }
 
 const A4: [number, number] = [595.28, 841.89]

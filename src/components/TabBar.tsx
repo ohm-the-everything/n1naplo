@@ -1,13 +1,7 @@
 import { ChartLine, PenLine, Settings as SettingsIcon } from 'lucide-react'
-import { hu } from '@/i18n/hu'
+import { useT } from '@/i18n'
 
 export type Tab = 'entry' | 'review' | 'settings'
-
-const TABS = [
-  { id: 'entry', label: hu.tabs.entry, Icon: PenLine },
-  { id: 'review', label: hu.tabs.review, Icon: ChartLine },
-  { id: 'settings', label: hu.tabs.settings, Icon: SettingsIcon },
-] as const
 
 type Props = {
   tab: Tab
@@ -15,6 +9,12 @@ type Props = {
 }
 
 export default function TabBar({ tab, onSelect }: Props) {
+  const t = useT()
+  const TABS = [
+    { id: 'entry', label: t.tabs.entry, Icon: PenLine },
+    { id: 'review', label: t.tabs.review, Icon: ChartLine },
+    { id: 'settings', label: t.tabs.settings, Icon: SettingsIcon },
+  ] as const
   return (
     <nav
       className="fixed inset-x-0 bottom-0 border-t border-line bg-card"

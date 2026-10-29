@@ -1,5 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { labelWithUnit, medName } from './meds'
+import { hu } from '@/i18n/hu'
+import { labelWithUnit, medNamer } from './meds'
+
+const medName = medNamer(hu)
 
 describe('medName', () => {
   it('uses the label the user gave', () => {
