@@ -59,7 +59,7 @@ cd android && ./gradlew assembleDebug
 Lásd [CONTRIBUTING.md](CONTRIBUTING.md) és [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 Biztonsági hiba: [SECURITY.md](SECURITY.md). **Soha ne küldj valódi naplóadatot.**
 
-Kiadó: Ohm Corp Kft. · Licenc: MIT (kód), SIL OFL 1.1 (Noto Sans betűtípus).
+Kiadó: OHM Corp Kft. · Licenc: MIT (kód), SIL OFL 1.1 (Noto Sans betűtípus).
 
 ---
 
@@ -107,4 +107,4 @@ Every promise with its mechanism and proof: [ETHICS.md](ETHICS.md). Contributing
 [CONTRIBUTING.md](CONTRIBUTING.md). Security: [SECURITY.md](SECURITY.md). **Never send real
 diary data.**
 
-Published by Ohm Corp Kft. · Licence: MIT (code), SIL OFL 1.1 (Noto Sans font).
+Published by OHM Corp Kft. · Licence: MIT (code), SIL OFL 1.1 (Noto Sans font).

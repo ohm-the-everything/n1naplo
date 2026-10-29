@@ -209,7 +209,7 @@ export const hu = {
     source: 'Forráskód',
     site: 'Weboldal',
     privacyLink: 'Adatvédelmi tájékoztató',
-    publisher: 'Kiadó: Ohm Corp Kft.',
+    publisher: 'Kiadó: OHM Corp Kft.',
     privacy:
       'Az app nem kér internet-hozzáférést, nem gyűjt és nem küld adatot. A napló a telefonodon van: csak akkor hagyja el, ha te mented ki, vagy ha másolatot kérsz a rendszer mentésébe.',
   },

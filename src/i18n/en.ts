@@ -210,7 +210,7 @@ export const en: Messages = {
     source: 'Source code',
     site: 'Website',
     privacyLink: 'Privacy policy',
-    publisher: 'Published by Ohm Corp Kft.',
+    publisher: 'Published by OHM Corp Kft.',
     privacy:
       'The app has no internet access and collects or sends no data. Your diary lives on your phone: it leaves only when you save it out, or when you ask for a copy in the system backup.',
   },
